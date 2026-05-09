@@ -233,12 +233,20 @@ def main() -> None:
         if cached is not None:
             return cached
 
-        model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-            model_name,
-            torch_dtype=resolve_dtype(args.torch_dtype),
-            device_map="auto",
-            trust_remote_code=args.trust_remote_code,
-        )
+        load_kw: dict[str, Any] = {
+            "torch_dtype": resolve_dtype(args.torch_dtype),
+            "device_map": "auto",
+            "trust_remote_code": args.trust_remote_code,
+            "low_cpu_mem_usage": True,
+        }
+        try:
+            model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                model_name,
+                **load_kw,
+                attn_implementation="sdpa",
+            )
+        except TypeError:
+            model = Qwen2_5_VLForConditionalGeneration.from_pretrained(model_name, **load_kw)
         processor = AutoProcessor.from_pretrained(
             model_name,
             trust_remote_code=args.trust_remote_code,
