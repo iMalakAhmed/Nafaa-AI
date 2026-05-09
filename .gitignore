@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+outputs/benchmark/*
+!outputs/benchmark/.gitkeep
+outputs/predictions/*
+!outputs/predictions/.gitkeep
+outputs/raw_model_outputs/*
+!outputs/raw_model_outputs/.gitkeep
+
+rendered_pages/
+sample_case_500.pdf
