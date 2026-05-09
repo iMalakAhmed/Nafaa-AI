@@ -60,6 +60,13 @@ def parse_args() -> argparse.Namespace:
         help="Torch dtype for model loading.",
     )
     parser.add_argument("--max-new-tokens", type=int, default=1024, help="Maximum generated tokens.")
+    parser.add_argument(
+        "--max-documents",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Process at most the first N documents after sorting (smoke test / partial runs).",
+    )
     parser.add_argument("--trust-remote-code", action="store_true", help="Enable trust_remote_code.")
     return parser.parse_args()
 
@@ -214,6 +221,11 @@ def main() -> None:
         documents.sort(key=lambda doc: doc.document_id)
     else:
         documents = load_documents(input_dir=args.input_dir, manifest_path=args.manifest)
+    if args.max_documents is not None:
+        if args.max_documents < 1:
+            raise ValueError("--max-documents must be >= 1")
+        documents = documents[: args.max_documents]
+        print(f"Capped at {len(documents)} document(s) (--max-documents)")
     typed_models = parse_typed_models(args.typed_model)
     instruction = load_prompt()
     raw_dir, pred_dir = ensure_output_dirs(args.output_dir)
