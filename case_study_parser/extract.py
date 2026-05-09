@@ -200,6 +200,12 @@ def generate_payload(
 
 def main() -> None:
     args = parse_args()
+    print(f"[extract] torch={torch.__version__}, cuda_available={torch.cuda.is_available()}")
+    if torch.cuda.is_available():
+        print(f"[extract] GPU device 0: {torch.cuda.get_device_name(0)}")
+    else:
+        print("[extract] WARNING: CUDA not visible — inference runs on CPU (orders of magnitude slower).")
+
     typed_dirs = parse_typed_dirs(args.typed_input_dir)
     if typed_dirs:
         if args.input_dir or args.manifest:
@@ -245,6 +251,10 @@ def main() -> None:
         if cached is not None:
             return cached
 
+        print(
+            f"[extract] Loading model & processor: {model_name!r}\n"
+            "          (First run downloads weights from Hugging Face — multi‑GB; progress depends on disk/network.)"
+        )
         load_kw: dict[str, Any] = {
             "torch_dtype": resolve_dtype(args.torch_dtype),
             "device_map": "auto",
