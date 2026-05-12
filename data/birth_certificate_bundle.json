@@ -1,7 +1,8 @@
 {
-  "description": "Birth-certificate pipeline bundle: input manifest + full case-study JSON shape the model is asked to return (see schemas/case_study.schema.json). The extractor still outputs one prediction file per manifest row; this template documents every field.",
+  "description": "Birth certificate pipeline: input manifest plus the exact JSON shape the vision model returns for document_type birth_certificate (schemas/birth_certificate.schema.json). Three groups: birth_certificate (office/registration metadata), ids (national numbers), personal_and_other (names and demographics).",
   "pipeline_manifest": [
     {
+      "documentation": "Edit paths to choose which scans to run.",
       "document_id": "BC_001",
       "document_type": "birth_certificate",
       "images": [
@@ -9,6 +10,7 @@
       ]
     },
     {
+      "documentation": "Edit paths to choose which scans to run.",
       "document_id": "BC_002",
       "document_type": "birth_certificate",
       "images": [
@@ -16,71 +18,58 @@
       ]
     }
   ],
-  "birth_certificate_to_case_study_hints": {
-    "note": "Official birth certificates rarely match charity case-study forms. Map only what is legible; otherwise null.",
-    "typical_mappings": {
-      "child_full_name": "Often head_of_household_name or first family_members[].name when the subject is the newborn",
-      "father_name": "May appear in attachments or family_members relation context",
-      "mother_name": "May appear in family_members or attachments",
-      "national_id_numbers_on_certificate": "national_id or family_members[].national_id",
-      "birth_date_or_registration": "research_date or notes in review_notes if no dedicated field",
-      "place_of_birth": "address_center or address_governorate",
-      "registration_office": "case_office or attachments[].notes"
-    }
+  "field_groups": {
+    "birth_certificate": "Titles, serial (رقم مسلسل), registration number/date (رقم القيد / تاريخ القيد), issue date, health office (م. صحة), civil registry (س. مدني), issuing authority, form line, software version, barcode notes.",
+    "ids": "Child / father / mother national IDs (الرقم القومي). Extra printed numbers go in other_ids as {label_ar, value}.",
+    "personal_and_other": "Child name, gender, religion, nationality, place and date of birth; father and mother names and religion/nationality; misc_notes for stamps or free text not fitting above."
   },
-  "case_study_extraction_template": {
+  "birth_certificate_extraction_template": {
     "document_id": "TEMPLATE",
     "source_files": [
       "data/raw_images/DataSet/Birth Certificate/BC_001.jpeg"
     ],
     "page_count": 1,
-    "case_office": null,
-    "social_unit": null,
-    "research_date": null,
-    "researcher_name": null,
-    "research_purpose": null,
-    "head_of_household_name": null,
-    "head_of_household_age": null,
-    "national_id": null,
-    "insurance_id": null,
-    "phone": null,
-    "address_center": null,
-    "address_governorate": null,
-    "current_job": null,
-    "family_members": [
-      {
+    "birth_certificate": {
+      "document_title_ar": null,
+      "serial_number": null,
+      "registration_number": null,
+      "registration_date": null,
+      "issue_date": null,
+      "health_office": null,
+      "civil_registry": null,
+      "issuing_authority": null,
+      "governorate_or_administration": null,
+      "form_reference": null,
+      "issuance_system_version": null,
+      "barcode_or_machine_notes": null
+    },
+    "ids": {
+      "child_national_id": null,
+      "father_national_id": null,
+      "mother_national_id": null,
+      "other_ids": []
+    },
+    "personal_and_other": {
+      "child": {
         "name": null,
-        "relation": null,
-        "age": null,
-        "national_id": null,
-        "social_status": null,
-        "education_status": null,
-        "employment_status": null,
-        "health_status": null
-      }
-    ],
-    "housing_type": null,
-    "housing_area": null,
-    "rooms_count": null,
-    "water_available": null,
-    "water_source": null,
-    "furniture_status": null,
-    "rent_amount": null,
-    "housing_independence": null,
-    "assets": [],
-    "social_status_summary": null,
-    "health_status_summary": null,
-    "economic_status_summary": null,
-    "family_needs": null,
-    "previous_aid": null,
-    "attachments": [
-      {
-        "attachment_type": null,
-        "subject_name": null,
-        "national_id": null,
-        "notes": null
-      }
-    ],
+        "gender": null,
+        "religion": null,
+        "nationality": null,
+        "place_of_birth": null,
+        "date_of_birth": null
+      },
+      "father": {
+        "name": null,
+        "religion": null,
+        "nationality": null
+      },
+      "mother": {
+        "name": null,
+        "religion": null,
+        "nationality": null
+      },
+      "misc_notes": null
+    },
     "uncertain_fields": [],
     "review_required": false,
     "review_notes": []

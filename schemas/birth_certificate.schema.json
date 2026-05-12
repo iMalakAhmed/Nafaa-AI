@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Egyptian birth certificate extraction (three logical groups)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_id",
+    "source_files",
+    "page_count",
+    "birth_certificate",
+    "ids",
+    "personal_and_other",
+    "uncertain_fields",
+    "review_required",
+    "review_notes"
+  ],
+  "properties": {
+    "document_id": { "type": "string", "minLength": 1 },
+    "source_files": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "page_count": { "type": "integer", "minimum": 1 },
+    "birth_certificate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Document / civil-registration metadata only (offices, dates, serials).",
+      "required": [
+        "document_title_ar",
+        "serial_number",
+        "registration_number",
+        "registration_date",
+        "issue_date",
+        "health_office",
+        "civil_registry",
+        "issuing_authority",
+        "governorate_or_administration",
+        "form_reference",
+        "issuance_system_version",
+        "barcode_or_machine_notes"
+      ],
+      "properties": {
+        "document_title_ar": { "type": ["string", "null"] },
+        "serial_number": { "type": ["string", "null"] },
+        "registration_number": { "type": ["string", "null"] },
+        "registration_date": { "type": ["string", "null"] },
+        "issue_date": { "type": ["string", "null"] },
+        "health_office": { "type": ["string", "null"] },
+        "civil_registry": { "type": ["string", "null"] },
+        "issuing_authority": { "type": ["string", "null"] },
+        "governorate_or_administration": { "type": ["string", "null"] },
+        "form_reference": { "type": ["string", "null"] },
+        "issuance_system_version": { "type": ["string", "null"] },
+        "barcode_or_machine_notes": { "type": ["string", "null"] }
+      }
+    },
+    "ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "National ID numbers and similar identifiers only.",
+      "required": [
+        "child_national_id",
+        "father_national_id",
+        "mother_national_id",
+        "other_ids"
+      ],
+      "properties": {
+        "child_national_id": { "type": ["string", "null"] },
+        "father_national_id": { "type": ["string", "null"] },
+        "mother_national_id": { "type": ["string", "null"] },
+        "other_ids": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label_ar", "value"],
+            "properties": {
+              "label_ar": { "type": ["string", "null"] },
+              "value": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "personal_and_other": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Names, demographics, places — everything that is not pure ID digits and not civil-office metadata.",
+      "required": ["child", "father", "mother", "misc_notes"],
+      "properties": {
+        "child": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "gender",
+            "religion",
+            "nationality",
+            "place_of_birth",
+            "date_of_birth"
+          ],
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "gender": { "type": ["string", "null"] },
+            "religion": { "type": ["string", "null"] },
+            "nationality": { "type": ["string", "null"] },
+            "place_of_birth": { "type": ["string", "null"] },
+            "date_of_birth": { "type": ["string", "null"] }
+          }
+        },
+        "father": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "religion", "nationality"],
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "religion": { "type": ["string", "null"] },
+            "nationality": { "type": ["string", "null"] }
+          }
+        },
+        "mother": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "religion", "nationality"],
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "religion": { "type": ["string", "null"] },
+            "nationality": { "type": ["string", "null"] }
+          }
+        },
+        "misc_notes": { "type": ["string", "null"] }
+      }
+    },
+    "uncertain_fields": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "review_required": { "type": "boolean" },
+    "review_notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

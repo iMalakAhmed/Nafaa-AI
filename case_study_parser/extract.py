@@ -11,13 +11,17 @@ from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
 
 from .common import (
     DocumentSpec,
+    apply_birth_certificate_defaults,
     apply_defaults,
+    empty_birth_certificate_payload,
     empty_payload,
     ensure_output_dirs,
     extract_first_json_object,
     list_image_files_recursive,
+    load_birth_certificate_prompt,
     load_documents,
     load_prompt,
+    validate_birth_certificate_payload,
     validate_payload,
 )
 
@@ -201,8 +205,12 @@ def generate_payload(
 
     try:
         payload = extract_first_json_object(raw_output)
-        payload = apply_defaults(payload, document)
-        validation_errors = validate_payload(payload)
+        if document.document_type == "birth_certificate":
+            payload = apply_birth_certificate_defaults(payload, document)
+            validation_errors = validate_birth_certificate_payload(payload)
+        else:
+            payload = apply_defaults(payload, document)
+            validation_errors = validate_payload(payload)
         if validation_errors:
             payload["review_required"] = True
             payload["review_notes"] = list(payload.get("review_notes", [])) + validation_errors
@@ -211,7 +219,12 @@ def generate_payload(
             )
         return payload, raw_output
     except Exception as exc:  # noqa: BLE001
-        fallback = empty_payload(document, f"Could not parse valid JSON from model output: {exc}")
+        if document.document_type == "birth_certificate":
+            fallback = empty_birth_certificate_payload(
+                document, f"Could not parse valid JSON from model output: {exc}"
+            )
+        else:
+            fallback = empty_payload(document, f"Could not parse valid JSON from model output: {exc}")
         return fallback, raw_output
 
 
@@ -250,7 +263,8 @@ def run_extract(args: argparse.Namespace) -> None:
         documents = documents[: args.max_documents]
         print(f"Capped at {len(documents)} document(s) (--max-documents)")
     typed_models = parse_typed_models(args.typed_model)
-    instruction = load_prompt()
+    instruction_case_study = load_prompt()
+    instruction_birth_certificate = load_birth_certificate_prompt()
     raw_dir, pred_dir = ensure_output_dirs(args.output_dir)
 
     print(f"Loaded {len(documents)} document(s)")
@@ -300,6 +314,11 @@ def run_extract(args: argparse.Namespace) -> None:
             f"(type={document.document_type}, model={selected_model})"
         )
         model, processor = get_model_and_processor(selected_model)
+        instruction = (
+            instruction_birth_certificate
+            if document.document_type == "birth_certificate"
+            else instruction_case_study
+        )
         payload, raw_output = generate_payload(
             model=model,
             processor=processor,

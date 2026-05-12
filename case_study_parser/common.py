@@ -11,6 +11,8 @@ from jsonschema import Draft202012Validator
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = ROOT_DIR / "schemas" / "case_study.schema.json"
 PROMPT_PATH = ROOT_DIR / "prompts" / "extract_case_study_prompt.txt"
+BIRTH_CERT_SCHEMA_PATH = ROOT_DIR / "schemas" / "birth_certificate.schema.json"
+BIRTH_CERT_PROMPT_PATH = ROOT_DIR / "prompts" / "extract_birth_certificate_prompt.txt"
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
 ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
 PERSIAN_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
@@ -31,8 +33,20 @@ def load_prompt() -> str:
     return PROMPT_PATH.read_text(encoding="utf-8").strip()
 
 
+def load_birth_certificate_prompt() -> str:
+    return BIRTH_CERT_PROMPT_PATH.read_text(encoding="utf-8").strip()
+
+
+def load_birth_certificate_schema() -> dict[str, Any]:
+    return json.loads(BIRTH_CERT_SCHEMA_PATH.read_text(encoding="utf-8"))
+
+
 def build_validator() -> Draft202012Validator:
     return Draft202012Validator(load_schema())
+
+
+def build_birth_certificate_validator() -> Draft202012Validator:
+    return Draft202012Validator(load_birth_certificate_schema())
 
 
 def list_image_files(input_dir: Path) -> list[Path]:
@@ -234,6 +248,126 @@ def empty_payload(document: DocumentSpec, note: str) -> dict[str, Any]:
         "review_required": True,
         "review_notes": [note],
     }
+
+
+def empty_birth_certificate_payload(document: DocumentSpec, note: str) -> dict[str, Any]:
+    """Schema-shaped fallback when model output is not valid JSON (birth_certificate document type)."""
+    return {
+        "document_id": document.document_id,
+        "source_files": [str(path) for path in document.image_paths],
+        "page_count": len(document.image_paths),
+        "birth_certificate": {
+            "document_title_ar": None,
+            "serial_number": None,
+            "registration_number": None,
+            "registration_date": None,
+            "issue_date": None,
+            "health_office": None,
+            "civil_registry": None,
+            "issuing_authority": None,
+            "governorate_or_administration": None,
+            "form_reference": None,
+            "issuance_system_version": None,
+            "barcode_or_machine_notes": None,
+        },
+        "ids": {
+            "child_national_id": None,
+            "father_national_id": None,
+            "mother_national_id": None,
+            "other_ids": [],
+        },
+        "personal_and_other": {
+            "child": {
+                "name": None,
+                "gender": None,
+                "religion": None,
+                "nationality": None,
+                "place_of_birth": None,
+                "date_of_birth": None,
+            },
+            "father": {"name": None, "religion": None, "nationality": None},
+            "mother": {"name": None, "religion": None, "nationality": None},
+            "misc_notes": None,
+        },
+        "uncertain_fields": ["model_output"],
+        "review_required": True,
+        "review_notes": [note],
+    }
+
+
+def apply_birth_certificate_defaults(payload: dict[str, Any], document: DocumentSpec) -> dict[str, Any]:
+    normalized = dict(payload)
+    normalized["document_id"] = normalized.get("document_id") or document.document_id
+    normalized["source_files"] = normalized.get("source_files") or [str(path) for path in document.image_paths]
+    normalized["page_count"] = int(normalized.get("page_count") or len(document.image_paths))
+
+    bc_keys = (
+        "document_title_ar",
+        "serial_number",
+        "registration_number",
+        "registration_date",
+        "issue_date",
+        "health_office",
+        "civil_registry",
+        "issuing_authority",
+        "governorate_or_administration",
+        "form_reference",
+        "issuance_system_version",
+        "barcode_or_machine_notes",
+    )
+    bc = dict(normalized.get("birth_certificate") or {})
+    for key in bc_keys:
+        bc.setdefault(key, None)
+    normalized["birth_certificate"] = bc
+
+    ids = dict(normalized.get("ids") or {})
+    ids.setdefault("child_national_id", None)
+    ids.setdefault("father_national_id", None)
+    ids.setdefault("mother_national_id", None)
+    raw_other = ids.get("other_ids")
+    if not isinstance(raw_other, list):
+        raw_other = []
+    cleaned_other: list[dict[str, Any]] = []
+    for item in raw_other:
+        if isinstance(item, dict):
+            cleaned_other.append(
+                {
+                    "label_ar": item.get("label_ar"),
+                    "value": item.get("value"),
+                }
+            )
+    ids["other_ids"] = cleaned_other
+    normalized["ids"] = ids
+
+    po = dict(normalized.get("personal_and_other") or {})
+    child = dict(po.get("child") or {})
+    for key in ("name", "gender", "religion", "nationality", "place_of_birth", "date_of_birth"):
+        child.setdefault(key, None)
+    po["child"] = child
+    father = dict(po.get("father") or {})
+    for key in ("name", "religion", "nationality"):
+        father.setdefault(key, None)
+    po["father"] = father
+    mother = dict(po.get("mother") or {})
+    for key in ("name", "religion", "nationality"):
+        mother.setdefault(key, None)
+    po["mother"] = mother
+    po.setdefault("misc_notes", None)
+    normalized["personal_and_other"] = po
+
+    normalized["uncertain_fields"] = normalized.get("uncertain_fields") or []
+    normalized["review_notes"] = normalized.get("review_notes") or []
+    normalized["review_required"] = bool(normalized.get("review_required", False))
+    return normalized
+
+
+def validate_birth_certificate_payload(payload: dict[str, Any]) -> list[str]:
+    validator = build_birth_certificate_validator()
+    errors = []
+    for error in validator.iter_errors(payload):
+        path = ".".join(str(part) for part in error.absolute_path) or "<root>"
+        errors.append(f"{path}: {error.message}")
+    return sorted(errors)
 
 
 def apply_defaults(payload: dict[str, Any], document: DocumentSpec) -> dict[str, Any]:

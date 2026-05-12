@@ -4,12 +4,17 @@ import argparse
 import json
 from pathlib import Path
 
-from .common import validate_payload
+from .common import validate_birth_certificate_payload, validate_payload
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate case-study JSON files against the schema.")
+    parser = argparse.ArgumentParser(description="Validate JSON files against a schema.")
     parser.add_argument("--input-dir", type=Path, required=True, help="Directory containing JSON files.")
+    parser.add_argument(
+        "--birth-certificate",
+        action="store_true",
+        help="Validate against schemas/birth_certificate.schema.json instead of case study.",
+    )
     return parser.parse_args()
 
 
@@ -23,7 +28,11 @@ def main() -> None:
     invalid_count = 0
     for json_file in json_files:
         payload = json.loads(json_file.read_text(encoding="utf-8"))
-        errors = validate_payload(payload)
+        errors = (
+            validate_birth_certificate_payload(payload)
+            if args.birth_certificate
+            else validate_payload(payload)
+        )
         if errors:
             invalid_count += 1
             print(f"{json_file.name}: INVALID")
