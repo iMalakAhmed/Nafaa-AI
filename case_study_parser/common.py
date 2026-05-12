@@ -89,7 +89,16 @@ def find_birth_certificate_image_dir(project_root: Path) -> Path | None:
 
 def load_documents(input_dir: Path | None = None, manifest_path: Path | None = None) -> list[DocumentSpec]:
     if manifest_path:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if isinstance(raw, dict) and "pipeline_manifest" in raw:
+            manifest = raw["pipeline_manifest"]
+        elif isinstance(raw, list):
+            manifest = raw
+        else:
+            raise ValueError(
+                "Manifest must be a JSON array of document objects, or an object with key "
+                "'pipeline_manifest' (see data/birth_certificate_bundle.json)."
+            )
         if not isinstance(manifest, list):
             raise ValueError("Manifest must be a JSON array of document objects.")
 

@@ -1,5 +1,6 @@
 [
   {
+    "documentation": "Full list of extractable case-study fields + BC mapping hints: see data/birth_certificate_bundle.json (case_study_extraction_template + birth_certificate_to_case_study_hints).",
     "document_id": "BC_001",
     "document_type": "birth_certificate",
     "images": [
@@ -7,6 +8,7 @@
     ]
   },
   {
+    "documentation": "Full list of extractable case-study fields + BC mapping hints: see data/birth_certificate_bundle.json (case_study_extraction_template + birth_certificate_to_case_study_hints).",
     "document_id": "BC_002",
     "document_type": "birth_certificate",
     "images": [

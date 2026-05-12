@@ -1,0 +1,88 @@
+{
+  "description": "Birth-certificate pipeline bundle: input manifest + full case-study JSON shape the model is asked to return (see schemas/case_study.schema.json). The extractor still outputs one prediction file per manifest row; this template documents every field.",
+  "pipeline_manifest": [
+    {
+      "document_id": "BC_001",
+      "document_type": "birth_certificate",
+      "images": [
+        "data/raw_images/DataSet/Birth Certificate/BC_001.jpeg"
+      ]
+    },
+    {
+      "document_id": "BC_002",
+      "document_type": "birth_certificate",
+      "images": [
+        "data/raw_images/DataSet/Birth Certificate/BC_002.jpeg"
+      ]
+    }
+  ],
+  "birth_certificate_to_case_study_hints": {
+    "note": "Official birth certificates rarely match charity case-study forms. Map only what is legible; otherwise null.",
+    "typical_mappings": {
+      "child_full_name": "Often head_of_household_name or first family_members[].name when the subject is the newborn",
+      "father_name": "May appear in attachments or family_members relation context",
+      "mother_name": "May appear in family_members or attachments",
+      "national_id_numbers_on_certificate": "national_id or family_members[].national_id",
+      "birth_date_or_registration": "research_date or notes in review_notes if no dedicated field",
+      "place_of_birth": "address_center or address_governorate",
+      "registration_office": "case_office or attachments[].notes"
+    }
+  },
+  "case_study_extraction_template": {
+    "document_id": "TEMPLATE",
+    "source_files": [
+      "data/raw_images/DataSet/Birth Certificate/BC_001.jpeg"
+    ],
+    "page_count": 1,
+    "case_office": null,
+    "social_unit": null,
+    "research_date": null,
+    "researcher_name": null,
+    "research_purpose": null,
+    "head_of_household_name": null,
+    "head_of_household_age": null,
+    "national_id": null,
+    "insurance_id": null,
+    "phone": null,
+    "address_center": null,
+    "address_governorate": null,
+    "current_job": null,
+    "family_members": [
+      {
+        "name": null,
+        "relation": null,
+        "age": null,
+        "national_id": null,
+        "social_status": null,
+        "education_status": null,
+        "employment_status": null,
+        "health_status": null
+      }
+    ],
+    "housing_type": null,
+    "housing_area": null,
+    "rooms_count": null,
+    "water_available": null,
+    "water_source": null,
+    "furniture_status": null,
+    "rent_amount": null,
+    "housing_independence": null,
+    "assets": [],
+    "social_status_summary": null,
+    "health_status_summary": null,
+    "economic_status_summary": null,
+    "family_needs": null,
+    "previous_aid": null,
+    "attachments": [
+      {
+        "attachment_type": null,
+        "subject_name": null,
+        "national_id": null,
+        "notes": null
+      }
+    ],
+    "uncertain_fields": [],
+    "review_required": false,
+    "review_notes": []
+  }
+}
