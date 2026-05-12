@@ -21,8 +21,21 @@ from .common import (
     validate_payload,
 )
 
+# Persists across repeated `run_extract` calls in the same process (e.g. Jupyter re-runs a cell).
+_MODEL_CACHE: dict[str, tuple[Qwen2_5_VLForConditionalGeneration, AutoProcessor]] = {}
 
-def parse_args() -> argparse.Namespace:
+
+def clear_model_cache() -> None:
+    """Drop cached models/processors (frees GPU RAM). Next `run_extract` will load again."""
+    global _MODEL_CACHE
+    for model, _proc in _MODEL_CACHE.values():
+        del model
+    _MODEL_CACHE.clear()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Extract structured JSON from charity case-study images.")
     parser.add_argument("--input-dir", type=Path, help="Directory containing image files.")
     parser.add_argument("--manifest", type=Path, help="Optional JSON manifest for multi-page documents.")
@@ -68,7 +81,11 @@ def parse_args() -> argparse.Namespace:
         help="Process at most the first N documents after sorting (smoke test / partial runs).",
     )
     parser.add_argument("--trust-remote-code", action="store_true", help="Enable trust_remote_code.")
-    return parser.parse_args()
+    return parser
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    return build_parser().parse_args(argv)
 
 
 def resolve_dtype(dtype_name: str) -> torch.dtype:
@@ -198,8 +215,8 @@ def generate_payload(
         return fallback, raw_output
 
 
-def main() -> None:
-    args = parse_args()
+def run_extract(args: argparse.Namespace) -> None:
+    """Run extraction for ``args``. Reuses loaded models in-process via ``_MODEL_CACHE``."""
     print(f"[extract] torch={torch.__version__}, cuda_available={torch.cuda.is_available()}")
     if torch.cuda.is_available():
         print(f"[extract] GPU device 0: {torch.cuda.get_device_name(0)}")
@@ -235,7 +252,6 @@ def main() -> None:
     typed_models = parse_typed_models(args.typed_model)
     instruction = load_prompt()
     raw_dir, pred_dir = ensure_output_dirs(args.output_dir)
-    model_cache: dict[str, tuple[Qwen2_5_VLForConditionalGeneration, AutoProcessor]] = {}
 
     print(f"Loaded {len(documents)} document(s)")
     print(f"Writing raw outputs to: {raw_dir}")
@@ -247,8 +263,9 @@ def main() -> None:
         print(f"  - default: {args.model_name}")
 
     def get_model_and_processor(model_name: str):
-        cached = model_cache.get(model_name)
+        cached = _MODEL_CACHE.get(model_name)
         if cached is not None:
+            print(f"[extract] Reusing in-memory model: {model_name!r}")
             return cached
 
         print(
@@ -273,7 +290,7 @@ def main() -> None:
             model_name,
             trust_remote_code=args.trust_remote_code,
         )
-        model_cache[model_name] = (model, processor)
+        _MODEL_CACHE[model_name] = (model, processor)
         return model, processor
 
     for index, document in enumerate(documents, start=1):
@@ -298,6 +315,10 @@ def main() -> None:
         )
 
     print("Extraction complete.")
+
+
+def main() -> None:
+    run_extract(parse_args())
 
 
 if __name__ == "__main__":

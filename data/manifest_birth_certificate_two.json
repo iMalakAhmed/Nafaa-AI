@@ -1,0 +1,16 @@
+[
+  {
+    "document_id": "BC_001",
+    "document_type": "birth_certificate",
+    "images": [
+      "data/raw_images/DataSet/Birth Certificate/BC_001.jpeg"
+    ]
+  },
+  {
+    "document_id": "BC_002",
+    "document_type": "birth_certificate",
+    "images": [
+      "data/raw_images/DataSet/Birth Certificate/BC_002.jpeg"
+    ]
+  }
+]
