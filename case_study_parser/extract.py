@@ -26,7 +26,8 @@ from .common import (
 )
 
 # Persists across repeated `run_extract` calls in the same process (e.g. Jupyter re-runs a cell).
-_MODEL_CACHE: dict[str, tuple[Qwen2_5_VLForConditionalGeneration, AutoProcessor]] = {}
+# Key: (model_name, torch_dtype, attn_implementation) so dtype/attention fixes are not masked by cache.
+_MODEL_CACHE: dict[tuple[str, str, str], tuple[Qwen2_5_VLForConditionalGeneration, AutoProcessor]] = {}
 
 
 def clear_model_cache() -> None:
@@ -85,6 +86,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Process at most the first N documents after sorting (smoke test / partial runs).",
     )
     parser.add_argument("--trust-remote-code", action="store_true", help="Enable trust_remote_code.")
+    parser.add_argument(
+        "--attn-implementation",
+        choices=("sdpa", "eager", "flash_attention_2"),
+        default="eager",
+        help=(
+            "Attention backend for the vision-language model. "
+            "'eager' is slower but avoids SDPA shape bugs on some CPU/GPU + dtype setups; "
+            "'sdpa' can be faster on CUDA when stable."
+        ),
+    )
     return parser
 
 
@@ -102,6 +113,30 @@ def resolve_dtype(dtype_name: str) -> torch.dtype:
     if torch.cuda.is_available():
         return torch.bfloat16
     return torch.float32
+
+
+def model_inference_device(model: Qwen2_5_VLForConditionalGeneration) -> torch.device:
+    return next(model.parameters()).device
+
+
+def model_inference_dtype(model: Qwen2_5_VLForConditionalGeneration) -> torch.dtype:
+    for p in model.parameters():
+        if p.is_floating_point():
+            return p.dtype
+    return torch.float32
+
+
+def align_processor_batch_to_model(
+    batch: Any, model: Qwen2_5_VLForConditionalGeneration
+) -> Any:
+    """Move tensors to the module device and match floating dtype (avoids VL merge / norm bugs)."""
+    device = model_inference_device(model)
+    dtype = model_inference_dtype(model)
+    batch = batch.to(device)
+    for key, value in list(batch.items()):
+        if isinstance(value, torch.Tensor) and value.is_floating_point():
+            batch[key] = value.to(device=device, dtype=dtype)
+    return batch
 
 
 def process_vision_info(messages: list[dict[str, Any]]) -> tuple[list[Image.Image] | None, list[Any] | None]:
@@ -185,7 +220,8 @@ def generate_payload(
         images=image_inputs,
         padding=True,
         return_tensors="pt",
-    ).to(model.device)
+    )
+    inputs = align_processor_batch_to_model(inputs, model)
 
     generated_ids = model.generate(
         **inputs,
@@ -267,6 +303,13 @@ def run_extract(args: argparse.Namespace) -> None:
     instruction_birth_certificate = load_birth_certificate_prompt()
     raw_dir, pred_dir = ensure_output_dirs(args.output_dir)
 
+    if not torch.cuda.is_available() and args.torch_dtype in ("float16", "bfloat16"):
+        print(
+            "[extract] WARNING: float16/bfloat16 on CPU is unreliable for Qwen2.5-VL; "
+            "using float32. On GPU, keep --torch-dtype float16 or auto."
+        )
+        args.torch_dtype = "float32"
+
     print(f"Loaded {len(documents)} document(s)")
     print(f"Writing raw outputs to: {raw_dir}")
     print(f"Writing predictions to: {pred_dir}")
@@ -277,26 +320,34 @@ def run_extract(args: argparse.Namespace) -> None:
         print(f"  - default: {args.model_name}")
 
     def get_model_and_processor(model_name: str):
-        cached = _MODEL_CACHE.get(model_name)
+        eff_dtype = args.torch_dtype
+        if not torch.cuda.is_available() and eff_dtype in ("float16", "bfloat16"):
+            eff_dtype = "float32"
+        eff_attn = args.attn_implementation
+        if eff_attn == "sdpa" and not torch.cuda.is_available():
+            eff_attn = "eager"
+        cache_key = (model_name, eff_dtype, eff_attn)
+        cached = _MODEL_CACHE.get(cache_key)
         if cached is not None:
-            print(f"[extract] Reusing in-memory model: {model_name!r}")
+            print(f"[extract] Reusing in-memory model: {model_name!r} ({eff_dtype}, {eff_attn})")
             return cached
 
         print(
-            f"[extract] Loading model & processor: {model_name!r}\n"
+            f"[extract] Loading model & processor: {model_name!r} ({eff_dtype}, {eff_attn})\n"
             "          (First run downloads weights from Hugging Face — multi‑GB; progress depends on disk/network.)"
         )
         load_kw: dict[str, Any] = {
-            "torch_dtype": resolve_dtype(args.torch_dtype),
+            "torch_dtype": resolve_dtype(eff_dtype),
             "device_map": "auto",
             "trust_remote_code": args.trust_remote_code,
             "low_cpu_mem_usage": True,
         }
+        attn = eff_attn
         try:
             model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
                 model_name,
                 **load_kw,
-                attn_implementation="sdpa",
+                attn_implementation=attn,
             )
         except TypeError:
             model = Qwen2_5_VLForConditionalGeneration.from_pretrained(model_name, **load_kw)
@@ -304,7 +355,7 @@ def run_extract(args: argparse.Namespace) -> None:
             model_name,
             trust_remote_code=args.trust_remote_code,
         )
-        _MODEL_CACHE[model_name] = (model, processor)
+        _MODEL_CACHE[cache_key] = (model, processor)
         return model, processor
 
     for index, document in enumerate(documents, start=1):
