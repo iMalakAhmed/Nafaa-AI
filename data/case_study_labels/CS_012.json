@@ -1,19 +1,17 @@
 {
   "document_id": "CS_012",
-  "source_files": [
-    "data/raw_images/DataSet/cast study/CS_012.jpeg"
-  ],
+  "source_files": ["data/raw_images/DataSet/cast study/CS_012.jpeg"],
   "page_count": 1,
   "document": {
     "document_type": "case_study",
     "form_version": "old",
-    "page_side": "front",
+    "page_side": "back",
     "case_number": null,
     "research_date": null,
     "source_entity": null
   },
   "office": {
-    "directorate": null,
+    "directorate": "مديرية التضامن الاجتماعي بالمنوفية",
     "administration": null,
     "social_unit": null,
     "researcher_name": null,
@@ -37,45 +35,35 @@
   },
   "family_members": [],
   "housing": {
-    "type": null,
+    "type": "بسيط",
     "ownership": null,
     "area": null,
     "rooms_count": null,
     "rent_value": null,
     "independence": null,
-    "water_source": null,
+    "water_source": "شبكة عمومية",
     "electricity": null,
     "appliances_condition": null
   },
-  "assets": {
-    "properties": null
-  },
+  "assets": {"properties": "لا يوجد حيازة"},
   "social_assessment": {
-    "family_social_status": null,
-    "health_notes": null,
-    "economic_status": null,
-    "family_needs": null,
-    "researcher_summary": null
+    "family_social_status": "تعيش الحالة في كنف أسرتها المكونة منها وأبنائها",
+    "health_notes": "جيدة",
+    "economic_status": "تعيش الحالة اعتمادا على مساعدة أهل الخير",
+    "family_needs": "مأكل وملبس ومساعدة مالية",
+    "researcher_summary": "ترى الوحدة مساعدة الحالة"
   },
   "checkbox_answers": [],
   "signatures": {
     "researcher_name": null,
     "unit_manager_name": null,
-    "stamp_present": null
+    "stamp_present": true
   },
   "uncertain_fields": [
-    "age",
-    "education_status",
-    "employment_status",
-    "health_status",
-    "marital_status",
-    "name",
-    "national_id",
-    "notes",
-    "relationship"
+    "social_assessment.family_social_status",
+    "social_assessment.economic_status",
+    "signatures.researcher_name"
   ],
-  "review_required": true,
-  "review_notes": [
-    "bootstrap prediction: human review required before fine-tuning"
-  ]
+  "review_required": false,
+  "review_notes": ["old back page; some handwriting is partially cut off or faint"]
 }

@@ -1,8 +1,6 @@
 {
   "document_id": "CS_008",
-  "source_files": [
-    "data/raw_images/DataSet/cast study/CS_008.jpeg"
-  ],
+  "source_files": ["data/raw_images/DataSet/cast study/CS_008.jpeg"],
   "page_count": 1,
   "document": {
     "document_type": "case_study",
@@ -47,9 +45,7 @@
     "electricity": null,
     "appliances_condition": null
   },
-  "assets": {
-    "properties": null
-  },
+  "assets": {"properties": null},
   "social_assessment": {
     "family_social_status": null,
     "health_notes": null,
@@ -61,20 +57,9 @@
   "signatures": {
     "researcher_name": null,
     "unit_manager_name": null,
-    "stamp_present": null
+    "stamp_present": false
   },
-  "uncertain_fields": [
-    "address",
-    "district",
-    "education_status",
-    "employment_status",
-    "governorate",
-    "health_status",
-    "marital_status",
-    "name"
-  ],
-  "review_required": true,
-  "review_notes": [
-    "bootstrap prediction: human review required before fine-tuning"
-  ]
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": ["blank new front form page; no handwritten values are present"]
 }

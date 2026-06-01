@@ -1,55 +1,56 @@
 {
   "document_id": "CS_010",
-  "source_files": [
-    "data/raw_images/DataSet/cast study/CS_010.jpeg"
-  ],
+  "source_files": ["data/raw_images/DataSet/cast study/CS_010.jpeg"],
   "page_count": 1,
   "document": {
     "document_type": "case_study",
-    "form_version": null,
-    "page_side": null,
-    "case_number": null,
-    "research_date": null,
+    "form_version": "old",
+    "page_side": "front",
+    "case_number": "18",
+    "research_date": "2025/12/18",
     "source_entity": null
   },
   "office": {
-    "directorate": null,
-    "administration": null,
+    "directorate": "مديرية التضامن الاجتماعي بالمنوفية",
+    "administration": "شبين الكوم",
     "social_unit": null,
     "researcher_name": null,
-    "requesting_entity": null,
-    "research_purpose": null
+    "requesting_entity": "تنمية المجتمع",
+    "research_purpose": "مساعدة"
   },
   "applicant": {
-    "full_name": null,
+    "full_name": "هبة ياسين عبد المحسن الليثي",
     "national_id": null,
-    "insurance_number": null,
-    "age": null,
-    "gender": null,
-    "phone": null,
-    "address": null,
-    "governorate": null,
-    "district": null,
-    "marital_status": null,
+    "insurance_number": "1700648",
+    "age": 40,
+    "gender": "أنثى",
+    "phone": "01060843980",
+    "address": "المشايخ مركز شبين الكوم محافظة المنوفية",
+    "governorate": "المنوفية",
+    "district": "مركز شبين الكوم",
+    "marital_status": "أرملة",
     "education_status": null,
     "employment_status": null,
     "health_status": null
   },
-  "family_members": [],
+  "family_members": [
+    {"row_index": 1, "name": "هبة ياسين عبد المحسن الليثي", "relationship": "العائلة", "age": 40, "national_id": "1700648", "marital_status": "أرملة", "education_status": "دبلوم", "employment_status": "لا يعمل", "health_status": "جيدة", "notes": null},
+    {"row_index": 2, "name": "مريم هشام عمر", "relationship": "ابنة", "age": 17, "national_id": "1700935", "marital_status": "آنسة", "education_status": "طالب", "employment_status": "طالب", "health_status": "جيد", "notes": null},
+    {"row_index": 3, "name": "سراج هشام عمر", "relationship": "ابن", "age": 13, "national_id": "1700548", "marital_status": "آنسة", "education_status": "طالب", "employment_status": "طالب", "health_status": "جيد", "notes": null},
+    {"row_index": 4, "name": "أحمد هشام عمر", "relationship": "ابن", "age": 6, "national_id": "1700056", "marital_status": "آنسة", "education_status": "طالب", "employment_status": "طالب", "health_status": "جيد", "notes": null}
+  ],
   "housing": {
-    "type": null,
-    "ownership": null,
+    "type": "بسيط",
+    "ownership": "ملك",
     "area": null,
-    "rooms_count": null,
+    "rooms_count": 2,
     "rent_value": null,
-    "independence": null,
+    "independence": "مستقل بالأسرة",
     "water_source": null,
     "electricity": null,
     "appliances_condition": null
   },
-  "assets": {
-    "properties": null
-  },
+  "assets": {"properties": null},
   "social_assessment": {
     "family_social_status": null,
     "health_notes": null,
@@ -61,12 +62,16 @@
   "signatures": {
     "researcher_name": null,
     "unit_manager_name": null,
-    "stamp_present": null
+    "stamp_present": false
   },
-  "uncertain_fields": [],
-  "review_required": true,
-  "review_notes": [
-    "model output was not valid JSON",
-    "bootstrap prediction: human review required before fine-tuning"
-  ]
+  "uncertain_fields": [
+    "office.social_unit",
+    "office.researcher_name",
+    "applicant.full_name",
+    "applicant.national_id",
+    "applicant.insurance_number",
+    "family_members"
+  ],
+  "review_required": false,
+  "review_notes": ["old front page; names and short numeric IDs are handwritten and not fully reliable"]
 }

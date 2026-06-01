@@ -1,13 +1,11 @@
 {
   "document_id": "CS_009",
-  "source_files": [
-    "data/raw_images/DataSet/cast study/CS_009.jpeg"
-  ],
+  "source_files": ["data/raw_images/DataSet/cast study/CS_009.jpeg"],
   "page_count": 1,
   "document": {
     "document_type": "case_study",
     "form_version": "new",
-    "page_side": "front",
+    "page_side": "back",
     "case_number": null,
     "research_date": null,
     "source_entity": null
@@ -47,9 +45,7 @@
     "electricity": null,
     "appliances_condition": null
   },
-  "assets": {
-    "properties": null
-  },
+  "assets": {"properties": null},
   "social_assessment": {
     "family_social_status": null,
     "health_notes": null,
@@ -57,15 +53,20 @@
     "family_needs": null,
     "researcher_summary": null
   },
-  "checkbox_answers": [],
+  "checkbox_answers": [
+    {"section": "الأجهزة المنزلية", "question": "هل لدى الأسرة أجهزة؟", "answer": "ثلاجة", "checked": true, "confidence": "medium"},
+    {"section": "الأجهزة المنزلية", "question": "هل لدى الأسرة أجهزة؟", "answer": "غسالة", "checked": true, "confidence": "medium"},
+    {"section": "الأجهزة المنزلية", "question": "هل لدى الأسرة أجهزة؟", "answer": "بوتاجاز", "checked": true, "confidence": "medium"},
+    {"section": "التعليم", "question": "هل يوجد أبناء في التعليم؟", "answer": "نعم", "checked": true, "confidence": "medium"},
+    {"section": "الإنفاق", "question": "احتياجات/إنفاق الأسرة خلال الشهر", "answer": "نعم لبعض البنود", "checked": true, "confidence": "low"},
+    {"section": "المرافق", "question": "نوع وصلة الكهرباء", "answer": "كهرباء", "checked": true, "confidence": "medium"}
+  ],
   "signatures": {
     "researcher_name": null,
     "unit_manager_name": null,
-    "stamp_present": null
+    "stamp_present": false
   },
-  "uncertain_fields": [],
-  "review_required": true,
-  "review_notes": [
-    "bootstrap prediction: human review required before fine-tuning"
-  ]
+  "uncertain_fields": ["checkbox_answers"],
+  "review_required": false,
+  "review_notes": ["new back checkbox page; only visibly marked options were included"]
 }

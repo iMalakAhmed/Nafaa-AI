@@ -1,13 +1,11 @@
 {
   "document_id": "CS_011",
-  "source_files": [
-    "data/raw_images/DataSet/cast study/CS_011.jpeg"
-  ],
+  "source_files": ["data/raw_images/DataSet/cast study/CS_011.jpeg"],
   "page_count": 1,
   "document": {
     "document_type": "case_study",
     "form_version": "new",
-    "page_side": "front",
+    "page_side": "back",
     "case_number": null,
     "research_date": null,
     "source_entity": null
@@ -47,9 +45,7 @@
     "electricity": null,
     "appliances_condition": null
   },
-  "assets": {
-    "properties": null
-  },
+  "assets": {"properties": null},
   "social_assessment": {
     "family_social_status": null,
     "health_notes": null,
@@ -61,11 +57,9 @@
   "signatures": {
     "researcher_name": null,
     "unit_manager_name": null,
-    "stamp_present": null
+    "stamp_present": false
   },
   "uncertain_fields": [],
-  "review_required": true,
-  "review_notes": [
-    "bootstrap prediction: human review required before fine-tuning"
-  ]
+  "review_required": false,
+  "review_notes": ["blank new back form page; no handwritten values or checked boxes are visible"]
 }
