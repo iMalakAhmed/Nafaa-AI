@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Arabic Social Case Study Form",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_id",
+    "source_files",
+    "page_count",
+    "document",
+    "office",
+    "applicant",
+    "family_members",
+    "housing",
+    "assets",
+    "social_assessment",
+    "checkbox_answers",
+    "signatures",
+    "uncertain_fields",
+    "review_required",
+    "review_notes"
+  ],
+  "properties": {
+    "document_id": {"type": ["string", "null"]},
+    "source_files": {"type": "array", "items": {"type": "string"}},
+    "page_count": {"type": "integer", "minimum": 1},
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_type", "form_version", "page_side", "case_number", "research_date", "source_entity"],
+      "properties": {
+        "document_type": {"const": "case_study"},
+        "form_version": {"type": ["string", "null"], "enum": ["old", "new", null]},
+        "page_side": {"type": ["string", "null"], "enum": ["front", "back", null]},
+        "case_number": {"type": ["string", "null"]},
+        "research_date": {"type": ["string", "null"]},
+        "source_entity": {"type": ["string", "null"]}
+      }
+    },
+    "office": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["directorate", "administration", "social_unit", "researcher_name", "requesting_entity", "research_purpose"],
+      "properties": {
+        "directorate": {"type": ["string", "null"]},
+        "administration": {"type": ["string", "null"]},
+        "social_unit": {"type": ["string", "null"]},
+        "researcher_name": {"type": ["string", "null"]},
+        "requesting_entity": {"type": ["string", "null"]},
+        "research_purpose": {"type": ["string", "null"]}
+      }
+    },
+    "applicant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "full_name", "national_id", "insurance_number", "age", "gender", "phone",
+        "address", "governorate", "district", "marital_status", "education_status",
+        "employment_status", "health_status"
+      ],
+      "properties": {
+        "full_name": {"type": ["string", "null"]},
+        "national_id": {"type": ["string", "null"]},
+        "insurance_number": {"type": ["string", "null"]},
+        "age": {"type": ["integer", "string", "null"]},
+        "gender": {"type": ["string", "null"]},
+        "phone": {"type": ["string", "null"]},
+        "address": {"type": ["string", "null"]},
+        "governorate": {"type": ["string", "null"]},
+        "district": {"type": ["string", "null"]},
+        "marital_status": {"type": ["string", "null"]},
+        "education_status": {"type": ["string", "null"]},
+        "employment_status": {"type": ["string", "null"]},
+        "health_status": {"type": ["string", "null"]}
+      }
+    },
+    "family_members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["row_index", "name", "relationship", "age", "national_id", "marital_status", "education_status", "employment_status", "health_status", "notes"],
+        "properties": {
+          "row_index": {"type": ["integer", "null"]},
+          "name": {"type": ["string", "null"]},
+          "relationship": {"type": ["string", "null"]},
+          "age": {"type": ["integer", "string", "null"]},
+          "national_id": {"type": ["string", "null"]},
+          "marital_status": {"type": ["string", "null"]},
+          "education_status": {"type": ["string", "null"]},
+          "employment_status": {"type": ["string", "null"]},
+          "health_status": {"type": ["string", "null"]},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "housing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "ownership", "area", "rooms_count", "rent_value", "independence", "water_source", "electricity", "appliances_condition"],
+      "properties": {
+        "type": {"type": ["string", "null"]},
+        "ownership": {"type": ["string", "null"]},
+        "area": {"type": ["string", "null"]},
+        "rooms_count": {"type": ["integer", "string", "null"]},
+        "rent_value": {"type": ["string", "null"]},
+        "independence": {"type": ["string", "null"]},
+        "water_source": {"type": ["string", "null"]},
+        "electricity": {"type": ["string", "null"]},
+        "appliances_condition": {"type": ["string", "null"]}
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["properties"],
+      "properties": {"properties": {"type": ["string", "null"]}}
+    },
+    "social_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family_social_status", "health_notes", "economic_status", "family_needs", "researcher_summary"],
+      "properties": {
+        "family_social_status": {"type": ["string", "null"]},
+        "health_notes": {"type": ["string", "null"]},
+        "economic_status": {"type": ["string", "null"]},
+        "family_needs": {"type": ["string", "null"]},
+        "researcher_summary": {"type": ["string", "null"]}
+      }
+    },
+    "checkbox_answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section", "question", "answer", "checked", "confidence"],
+        "properties": {
+          "section": {"type": ["string", "null"]},
+          "question": {"type": ["string", "null"]},
+          "answer": {"type": ["string", "null"]},
+          "checked": {"type": ["boolean", "null"]},
+          "confidence": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "signatures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["researcher_name", "unit_manager_name", "stamp_present"],
+      "properties": {
+        "researcher_name": {"type": ["string", "null"]},
+        "unit_manager_name": {"type": ["string", "null"]},
+        "stamp_present": {"type": ["boolean", "null"]}
+      }
+    },
+    "uncertain_fields": {"type": "array", "items": {"type": "string"}},
+    "review_required": {"type": "boolean"},
+    "review_notes": {"type": "array", "items": {"type": "string"}}
+  }
+}
+
