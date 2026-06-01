@@ -1,0 +1,55 @@
+{
+  "document_id": "BC_009",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_009.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "2980067265",
+    "registration_number": "275",
+    "registration_date": "2006/04/29",
+    "issue_date": "2021/11/20",
+    "health_office": "البتانون",
+    "civil_registry": "مركز شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": "نموذج 2/40",
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": null,
+    "father_national_id": "27111251700379",
+    "mother_national_id": "27610041701026",
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "محمد علي فتحي ابو عنبة الله",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "26/04/2006"
+    },
+    "father": {
+      "name": "علي فتحي ابو عنبة الله",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "نجلاء شوقي عبد المجيد البيري",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "ids.child_national_id",
+    "personal_and_other.child.name",
+    "personal_and_other.child.date_of_birth"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

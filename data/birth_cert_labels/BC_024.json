@@ -1,0 +1,53 @@
+{
+  "document_id": "BC_024",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_024.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "3152573102",
+    "registration_number": "326",
+    "registration_date": "2007/07/01",
+    "issue_date": "2022/08/23",
+    "health_office": "البتانون",
+    "civil_registry": "مركز شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": "نموذج 2/40",
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "30707071706533",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "جابر",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "07/07/2007"
+    },
+    "father": {
+      "name": "محمد سعيد علي ابو عثمان",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "عزة سعيد كردور",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "personal_and_other.child.name"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

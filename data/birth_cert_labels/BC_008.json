@@ -1,0 +1,53 @@
+{
+  "document_id": "BC_008",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_008.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "3014641490",
+    "registration_number": "230",
+    "registration_date": "2009/07/04",
+    "issue_date": "2022/01/20",
+    "health_office": "البتانون",
+    "civil_registry": "مركز شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": "نموذج 2/40",
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "30906261700542",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "حنين",
+      "gender": "أنثى",
+      "religion": "مسلمة",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "26/06/2009"
+    },
+    "father": {
+      "name": "هشام علي شعبان عامر",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "سماح شوقي الشباسي",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "personal_and_other.child.name"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

@@ -20,13 +20,14 @@ Do not fine-tune with 20 documents. Use these 20 files as your first benchmark a
 5. Run the benchmark script to measure accuracy.
 6. Only after that decide whether to add another model or fine-tune.
 
-## Recommended First Model
+## Recommended Models (Arabic handwriting + forms)
 
-Start with one model only:
+| Preset | Model | GPU |
+|--------|--------|-----|
+| `arabic-ocr-7b` (default for `--case-study`) | `mo1998/arabic-ocr-qwen2.5-vl` | A10G |
+| `arabic-handwriting-3b` | `sherif1313/Arabic-English-handwritten-OCR-v3` | T4 |
 
-- `Qwen/Qwen2.5-VL-7B-Instruct`
-
-The extraction script in this repo is wired for Qwen2.5-VL style models through `transformers`.
+Generic `Qwen2.5-VL-3B` without Arabic fine-tuning is poor on pen-filled case-study forms — use the presets above.
 
 ## Project Layout
 
@@ -63,6 +64,55 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
+
+## Run on Modal (GPU in the cloud)
+
+Use [Modal](https://modal.com) instead of Colab — no Jupyter connection issues.
+
+```powershell
+pip install -r requirements-modal.txt
+modal setup
+```
+
+**Case-study forms (recommended)** — Arabic OCR 7B on A10G, fills every field in `data/field_catalog_case_study.json`:
+
+```powershell
+modal run modal_app.py --case-study --max-documents 3
+```
+
+Full WhatsApp batch (`--max-documents 0` = no cap):
+
+```powershell
+modal run modal_app.py --case-study --max-documents 0 --manifest data/manifest_whatsapp_pages.json
+```
+
+Cheaper smoke test on T4 (Arabic handwriting 3B):
+
+```powershell
+modal run modal_app.py --case-study --model-preset arabic-handwriting-3b --gpu T4 --max-documents 2
+```
+
+Outputs: `outputs/predictions/field_extractions/*.json` — one JSON per image with `extracted_fields` (label + value + found).
+
+Visualize:
+
+```powershell
+python -m case_study_parser.visualize --manifest data/manifest_whatsapp_pages.json --predictions-dir outputs/predictions/field_extractions --open-browser
+```
+
+Edit fields in [`data/field_catalog_case_study.json`](./data/field_catalog_case_study.json) before running.
+
+Birth certificates:
+
+```powershell
+modal run modal_app.py --mode manifest --manifest data/birth_certificate_bundle.json --max-documents 2
+```
+
+Results land in `outputs/predictions/` locally (auto-downloaded) and on the Modal volume `case-study-outputs`.
+
+Optional: create a Modal secret named `huggingface` with `HF_TOKEN` if the model requires Hugging Face auth.
+
+See [`modal_app.py`](./modal_app.py) for all flags.
 
 ## Step 1: Add Your Images
 

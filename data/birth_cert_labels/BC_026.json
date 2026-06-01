@@ -1,0 +1,53 @@
+{
+  "document_id": "BC_026",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_026.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "2914614514",
+    "registration_number": "302",
+    "registration_date": "2012/01/21",
+    "issue_date": "2021/08/28",
+    "health_office": "شبين الكوم أول",
+    "civil_registry": "شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "31201171700888",
+    "father_national_id": "27002241700156",
+    "mother_national_id": "27808281700269",
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "هبة الله",
+      "gender": "أنثى",
+      "religion": "مسلمة",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / شبين الكوم",
+      "date_of_birth": "17/01/2012"
+    },
+    "father": {
+      "name": "نبيل عبد السلام يحيى",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "دعاء محمد عبد العزيز الرعدني",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "personal_and_other.child.name"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

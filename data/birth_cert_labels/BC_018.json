@@ -1,0 +1,51 @@
+{
+  "document_id": "BC_018",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_018.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "0569612594",
+    "registration_number": "229",
+    "registration_date": "2004/08/29",
+    "issue_date": "2008/04/21",
+    "health_office": "شبين الكوم أول",
+    "civil_registry": "شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "30408051701945",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "منال",
+      "gender": "أنثى",
+      "religion": "مسلمة",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / شبين الكوم",
+      "date_of_birth": "05/08/2004"
+    },
+    "father": {
+      "name": "ياسر السيد ابو عبيد",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "امال السيد عجلان",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": []
+}

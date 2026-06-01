@@ -1,10 +1,14 @@
 .venv/
+.modal/
+.claude/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .pytest_cache/
 
+outputs/*
+!outputs/benchmark/
 outputs/benchmark/*
 !outputs/benchmark/.gitkeep
 outputs/predictions/*

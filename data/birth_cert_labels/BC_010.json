@@ -1,0 +1,53 @@
+{
+  "document_id": "BC_010",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_010.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "3073427613",
+    "registration_number": "148",
+    "registration_date": "2016/01/16",
+    "issue_date": "2022/05/23",
+    "health_office": "الشهداء",
+    "civil_registry": "مركز الشهداء",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": "نموذج 2/40",
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "31601131700468",
+    "father_national_id": "27003221700253",
+    "mother_national_id": "27804011701004",
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "نعيمة",
+      "gender": "أنثى",
+      "religion": "مسلمة",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز الشهداء",
+      "date_of_birth": "13/01/2016"
+    },
+    "father": {
+      "name": "هشام علي شعبان عامر",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "سماح شوقي ابو الفتوح الشباسي",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "personal_and_other.child.name"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

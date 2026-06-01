@@ -1,63 +1,21 @@
-Read this Egyptian birth certificate (صورة قيد ميلاد / civil birth record) image and return one valid JSON object only.
+You are extracting an Egyptian birth certificate (صورة قيد ميلاد / civil birth record) from the image.
 
-Important rules:
-- Return JSON only. Do not include explanations or markdown fences.
-- Do not invent values. If a field is missing or unreadable, return null (or [] for other_ids when empty).
-- Preserve Arabic text as written whenever possible.
-- National ID values (الرقم القومي) must go only under "ids". Office names, dates, serial numbers go only under "birth_certificate". Names, gender, religion, nationality, place/date of birth go only under "personal_and_other".
-- If handwriting is unclear, make the best cautious guess and add the JSON path (e.g. "ids.child_national_id") to uncertain_fields.
-- If the form is incomplete or ambiguous, set review_required to true and explain in review_notes.
+Return ONE valid JSON object only. No markdown, no commentary.
 
-Return exactly this structure (all keys required; use null where unknown):
+Rules:
+- Read all visible Arabic text and numbers from the certificate.
+- Do not invent values. Use null only when a field is truly absent or unreadable.
+- National ID numbers (الرقم القومي) go only under "ids".
+- Office names, serial, registration number/date, issue date → "birth_certificate".
+- Child and parents' names, gender, religion, nationality, birth place/date → "personal_and_other".
+- If unclear, guess cautiously and add the JSON path to "uncertain_fields".
+- If incomplete, set "review_required": true and note why in "review_notes".
 
-{
-  "document_id": "string",
-  "source_files": ["string"],
-  "page_count": 1,
-  "birth_certificate": {
-    "document_title_ar": null,
-    "serial_number": null,
-    "registration_number": null,
-    "registration_date": null,
-    "issue_date": null,
-    "health_office": null,
-    "civil_registry": null,
-    "issuing_authority": null,
-    "governorate_or_administration": null,
-    "form_reference": null,
-    "issuance_system_version": null,
-    "barcode_or_machine_notes": null
-  },
-  "ids": {
-    "child_national_id": null,
-    "father_national_id": null,
-    "mother_national_id": null,
-    "other_ids": []
-  },
-  "personal_and_other": {
-    "child": {
-      "name": null,
-      "gender": null,
-      "religion": null,
-      "nationality": null,
-      "place_of_birth": null,
-      "date_of_birth": null
-    },
-    "father": {
-      "name": null,
-      "religion": null,
-      "nationality": null
-    },
-    "mother": {
-      "name": null,
-      "religion": null,
-      "nationality": null
-    },
-    "misc_notes": null
-  },
-  "uncertain_fields": [],
-  "review_required": false,
-  "review_notes": []
-}
-
-Use "other_ids" only for extra printed numbers (e.g. serial variants) with {"label_ar": "...", "value": "..."} objects.
+Required structure:
+- document_id (string)
+- source_files (array of strings — use the literal paths provided in the user message if given)
+- page_count (integer)
+- birth_certificate: document_title_ar, serial_number, registration_number, registration_date, issue_date, health_office, civil_registry, issuing_authority, governorate_or_administration, form_reference, issuance_system_version, barcode_or_machine_notes
+- ids: child_national_id, father_national_id, mother_national_id, other_ids (array of {label_ar, value})
+- personal_and_other: child {name, gender, religion, nationality, place_of_birth, date_of_birth}, father {name, religion, nationality}, mother {name, religion, nationality}, misc_notes
+- uncertain_fields, review_required, review_notes

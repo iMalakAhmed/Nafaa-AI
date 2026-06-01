@@ -1,0 +1,55 @@
+{
+  "document_id": "BC_037",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_037.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "2581564980",
+    "registration_number": "82",
+    "registration_date": "2017/02/28",
+    "issue_date": "2019/12/07",
+    "health_office": "البتانون",
+    "civil_registry": "مركز شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": "www.cso.gov.eg"
+  },
+  "ids": {
+    "child_national_id": "31702281700432",
+    "father_national_id": "27702071700298",
+    "mother_national_id": "27810011706324",
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "أحمد",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "28/02/2017"
+    },
+    "father": {
+      "name": "علاء بسيوني عبد المقصود السقا",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "سماح محمد مليجي السقا",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "ids.mother_national_id"
+  ],
+  "review_required": false,
+  "review_notes": [
+    "mother national id typed but partly smeared; double-check digits"
+  ]
+}

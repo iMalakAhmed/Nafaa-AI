@@ -1,0 +1,51 @@
+{
+  "document_id": "BC_019",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_019.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "0160513799",
+    "registration_number": "135",
+    "registration_date": "1999/01/14",
+    "issue_date": "2005/06/18",
+    "health_office": "شبين الكوم أول",
+    "civil_registry": "شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "29901081701293",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "أحمد",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / شبين الكوم",
+      "date_of_birth": "08/01/1999"
+    },
+    "father": {
+      "name": "ياسر السيد ابو عبيد",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "أمال السيد عجلان",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": []
+}
