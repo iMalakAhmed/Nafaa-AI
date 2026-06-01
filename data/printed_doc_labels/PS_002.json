@@ -1,0 +1,54 @@
+{
+  "document_id": "PS_002",
+  "source_files": [
+    "data/raw_images/DataSet/printed_docuemnts/PS_002.jpeg"
+  ],
+  "page_count": 1,
+  "document_header": {
+    "document_type": "social_insurance_inquiry",
+    "document_title_ar": "استعلام بيانات مؤمن عليه بالملف التأميني",
+    "issuing_authority_ar": "الهيئة القومية للتأمين الاجتماعي / صندوق العاملين بقطاعي الأعمال العام والخاص",
+    "template_code": "INDNO050/INDNS08",
+    "print_datetime": "2023/02/05",
+    "region_code": "07",
+    "region_name": "المنوفية",
+    "office_code": "13",
+    "office_name": "شبين الكوم ثان",
+    "unit": null,
+    "reference_number": "45838722/IB91"
+  },
+  "ids": {
+    "national_id": "27804011701004",
+    "insurance_number": "006607823",
+    "paying_agent_insurance_number": null,
+    "paying_agent_national_id": null
+  },
+  "personal": {
+    "full_name_triple": "سماح مؤمن ابو النشوج",
+    "family_name": "النحاسى",
+    "mother_name": "امينة محمد",
+    "gender": "أنثى",
+    "date_of_birth": "1978/04/01",
+    "governorate_code": "17",
+    "governorate_name": "المنوفية",
+    "district_code": "02",
+    "district_name": "مركز شبين الكوم",
+    "sector_law": null
+  },
+  "social_insurance": {
+    "insurance_status": "لا توجد بيانات تأمينية",
+    "insurance_status_note": "لا توجد بيانات تأمينية لهذا الشخص",
+    "main_center_address": "٣ ش الألفي - القاهرة",
+    "website": "WWW.NOSI.GOV.EG",
+    "customer_service_number": "16217",
+    "fax_number": "25912453"
+  },
+  "payroll": null,
+  "uncertain_fields": [
+    "personal.full_name_triple",
+    "personal.family_name",
+    "ids.insurance_number"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

@@ -1,0 +1,54 @@
+{
+  "document_id": "PS_011",
+  "source_files": [
+    "data/raw_images/DataSet/printed_docuemnts/PS_011.jpeg"
+  ],
+  "page_count": 1,
+  "document_header": {
+    "document_type": "social_insurance_inquiry",
+    "document_title_ar": "استعلام بيانات مؤمن عليه بالملف التأميني",
+    "issuing_authority_ar": "الهيئة القومية للتأمين الاجتماعي / صندوق العاملين بقطاعي الأعمال العام والخاص",
+    "template_code": "INDNO050/INDNS08",
+    "print_datetime": "2022/12/03",
+    "region_code": "07",
+    "region_name": "المنوفية",
+    "office_code": "13",
+    "office_name": "شبين الكوم ثان",
+    "unit": null,
+    "reference_number": "48326205"
+  },
+  "ids": {
+    "national_id": "27408311700231",
+    "insurance_number": "331075000",
+    "paying_agent_insurance_number": null,
+    "paying_agent_national_id": null
+  },
+  "personal": {
+    "full_name_triple": "حمدى محمد السيد",
+    "family_name": "الصفاوي",
+    "mother_name": "فوزية احمد",
+    "gender": "ذكر",
+    "date_of_birth": "1974/08/31",
+    "governorate_code": "17",
+    "governorate_name": "المنوفية",
+    "district_code": "02",
+    "district_name": "مركز شبين الكوم",
+    "sector_law": null
+  },
+  "social_insurance": {
+    "insurance_status": "غير مؤمن عليه حاليا",
+    "insurance_status_note": "غير مؤمن عليه حاليا",
+    "main_center_address": "٣ ش الألفي - القاهرة",
+    "website": "WWW.NOSI.GOV.EG",
+    "customer_service_number": "16217",
+    "fax_number": "25912453"
+  },
+  "payroll": null,
+  "uncertain_fields": [
+    "ids.national_id",
+    "ids.insurance_number",
+    "personal.full_name_triple"
+  ],
+  "review_required": false,
+  "review_notes": []
+}

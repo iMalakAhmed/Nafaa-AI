@@ -1,0 +1,71 @@
+{
+  "document_id": "PS_001",
+  "source_files": [
+    "data/raw_images/DataSet/printed_docuemnts/PS_001.jpeg"
+  ],
+  "page_count": 1,
+  "document_header": {
+    "document_type": "payroll_slip",
+    "document_title_ar": "بيانات الصرف الدوري للقائم بالصرف",
+    "issuing_authority_ar": "الهيئة القومية للتأمين الاجتماعي / صندوق العاملين بقطاعي الأعمال العام والخاص",
+    "template_code": "BENINPBO/BEINSBO",
+    "print_datetime": "2023/12/02",
+    "region_code": "07",
+    "region_name": "المنوفية",
+    "office_code": "13",
+    "office_name": "شبين الكوم ثان",
+    "unit": null,
+    "reference_number": "13243910/1887"
+  },
+  "ids": {
+    "national_id": "26913331400993",
+    "insurance_number": "546133771",
+    "paying_agent_insurance_number": "7651677",
+    "paying_agent_national_id": null
+  },
+  "personal": {
+    "full_name_triple": "ابراهيم عبيد الطنطاوي حسن",
+    "family_name": null,
+    "mother_name": null,
+    "gender": "ذكر",
+    "date_of_birth": null,
+    "governorate_code": null,
+    "governorate_name": null,
+    "district_code": null,
+    "district_name": null,
+    "sector_law": null
+  },
+  "social_insurance": null,
+  "payroll": {
+    "pension_sector": "قانون 60/1-8 لأصحاب الأعمال",
+    "follow_up_office": "المنوفية - مكتب شبين الكوم ثان",
+    "payment_start_date": "1-2-21",
+    "disbursement_bank": "بنك الزراعي شبين الكوم",
+    "payment_type": null,
+    "current_account_number": null,
+    "total_entitlement": "1319 جنيه 76",
+    "total_deductions": "--",
+    "net_pension": "1917 جنيه",
+    "paying_agent": {
+      "name": "حنان معني علي"
+    },
+    "form_codes": [
+      "ENTER",
+      "PF06"
+    ]
+  },
+  "uncertain_fields": [
+    "ids.national_id",
+    "ids.insurance_number",
+    "ids.paying_agent_insurance_number",
+    "ids.paying_agent_national_id",
+    "personal.full_name_triple",
+    "payroll.paying_agent.name",
+    "payroll.total_entitlement",
+    "payroll.net_pension"
+  ],
+  "review_required": true,
+  "review_notes": [
+    "payroll slip is low contrast and handwritten marks obscure several numeric values"
+  ]
+}

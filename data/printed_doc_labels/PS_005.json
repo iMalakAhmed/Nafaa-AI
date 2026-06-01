@@ -1,0 +1,73 @@
+{
+  "document_id": "PS_005",
+  "source_files": [
+    "data/raw_images/DataSet/printed_docuemnts/PS_005.jpeg"
+  ],
+  "page_count": 1,
+  "document_header": {
+    "document_type": "payroll_slip",
+    "document_title_ar": "بيانات الصرف الدوري للقائم بالصرف",
+    "issuing_authority_ar": "الهيئة القومية للتأمين الاجتماعي / صندوق العاملين بقطاعي الأعمال العام والخاص",
+    "template_code": "BENINPBO/BEINSBO",
+    "print_datetime": "2022/08/21",
+    "region_code": "07",
+    "region_name": "المنوفية",
+    "office_code": "13",
+    "office_name": "شبين الكوم ثان",
+    "unit": null,
+    "reference_number": null
+  },
+  "ids": {
+    "national_id": "341112012579",
+    "insurance_number": "98084",
+    "paying_agent_insurance_number": "44744",
+    "paying_agent_national_id": "276110417036"
+  },
+  "personal": {
+    "full_name_triple": "علي فتحي مصطفى السيد",
+    "family_name": null,
+    "mother_name": null,
+    "gender": "ذكر",
+    "date_of_birth": null,
+    "governorate_code": null,
+    "governorate_name": null,
+    "district_code": null,
+    "district_name": null,
+    "sector_law": null
+  },
+  "social_insurance": null,
+  "payroll": {
+    "pension_sector": "قانون 75/79 للعاملين بقطاع الأعمال العام",
+    "follow_up_office": "المنوفية - مكتب شبين الكوم ثان",
+    "payment_start_date": "1-2009",
+    "disbursement_bank": "بنك ناصر الاجتماعي شبين الكوم",
+    "payment_type": null,
+    "current_account_number": null,
+    "total_entitlement": "1687 جنيه",
+    "total_deductions": "00",
+    "net_pension": "1687 جنيه",
+    "paying_agent": {
+      "name": "نبيلة فوقي عبد السيد"
+    },
+    "form_codes": [
+      "PF10",
+      "PF03",
+      "ENTER",
+      "PF06"
+    ]
+  },
+  "uncertain_fields": [
+    "ids.national_id",
+    "ids.insurance_number",
+    "ids.paying_agent_insurance_number",
+    "ids.paying_agent_national_id",
+    "payroll.pension_sector",
+    "payroll.payment_start_date",
+    "payroll.total_entitlement",
+    "payroll.net_pension"
+  ],
+  "review_required": true,
+  "review_notes": [
+    "payroll numbers and pension-sector line are partially blocked by fold/stamp"
+  ]
+}
