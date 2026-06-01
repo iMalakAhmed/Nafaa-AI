@@ -59,6 +59,64 @@ FIELD_KINDS: dict[str, str] = {
 
 SCALAR_FIELD_PATHS = list(FIELD_KINDS.keys())
 
+FIELD_LABELS_AR: dict[str, list[str]] = {
+    "document.form_version": ["نوع / إصدار النموذج"],
+    "document.page_side": ["وجه / ظهر الصفحة"],
+    "document.case_number": ["رقم البحث", "رقم الحالة", "رقم الملف"],
+    "document.research_date": ["تاريخ البحث"],
+    "document.source_entity": ["الجهة طالبة البحث", "مصدر البحث"],
+    "office.directorate": ["مديرية التضامن الاجتماعي"],
+    "office.administration": ["الإدارة الاجتماعية"],
+    "office.social_unit": ["الوحدة الاجتماعية"],
+    "office.researcher_name": ["اسم القائم بالبحث", "اسم الباحث"],
+    "office.requesting_entity": ["الجهة طالبة البحث"],
+    "office.research_purpose": ["الغرض من البحث"],
+    "applicant.full_name": ["الاسم", "اسم الحالة", "اسم رب الأسرة", "اسم صاحب البحث"],
+    "applicant.national_id": ["الرقم القومي"],
+    "applicant.insurance_number": ["الرقم التأميني"],
+    "applicant.age": ["السن"],
+    "applicant.gender": ["النوع"],
+    "applicant.phone": ["تليفون", "رقم الهاتف"],
+    "applicant.address": ["العنوان", "محل الإقامة"],
+    "applicant.governorate": ["محافظة"],
+    "applicant.district": ["مركز", "قسم"],
+    "applicant.marital_status": ["الحالة الاجتماعية"],
+    "applicant.education_status": ["الحالة التعليمية"],
+    "applicant.employment_status": ["حالة العمل", "الحالة العملية أو الوظيفية"],
+    "applicant.health_status": ["الحالة الصحية"],
+    "housing.type": ["المسكن", "نوع السكن"],
+    "housing.ownership": ["نوع السكن", "تمليك", "إيجار"],
+    "housing.area": ["المساحة"],
+    "housing.rooms_count": ["عدد الغرف"],
+    "housing.rent_value": ["القيمة الإيجارية الشهرية للسكن"],
+    "housing.independence": ["استقلالية السكن", "مستقل بالأسرة", "مشترك"],
+    "housing.water_source": ["مصدر المياه"],
+    "housing.electricity": ["إنارة", "كهرباء"],
+    "housing.appliances_condition": ["حالة الأثاث", "حالة السكن"],
+    "assets.properties": ["حيازة العقارات والأملاك والأرض الزراعية"],
+    "social_assessment.family_social_status": ["الحالة الاجتماعية للأسرة"],
+    "social_assessment.health_notes": ["الحالة الصحية", "تذكر حالات الإعاقة والأمراض الأخرى"],
+    "social_assessment.economic_status": ["الحالة الاقتصادية", "الدخل وأوجه الإنفاق"],
+    "social_assessment.family_needs": ["احتياجات الأسرة"],
+    "social_assessment.researcher_summary": ["رأي الباحث", "مدى الاستفادة من منظومة الضمان الاجتماعي"],
+    "signatures.researcher_name": ["الباحث", "اسم الباحث"],
+    "signatures.unit_manager_name": ["اسم رئيس الوحدة", "رئيس الوحدة"],
+    "signatures.stamp_present": ["ختم الوحدة", "ختم الشعار"],
+}
+
+FAMILY_MEMBER_LABELS_AR: dict[str, list[str]] = {
+    "row_index": ["م"],
+    "name": ["الاسم"],
+    "relationship": ["الصلة"],
+    "age": ["السن"],
+    "national_id": ["الرقم القومي"],
+    "marital_status": ["الحالة الاجتماعية"],
+    "education_status": ["الحالة التعليمية"],
+    "employment_status": ["حالة العمل / الوظيفة"],
+    "health_status": ["الحالة الصحية"],
+    "notes": ["ملاحظات"],
+}
+
 _EMPTY_RECORD: dict[str, Any] = {
     "document_id": None,
     "source_files": [],
@@ -177,3 +235,16 @@ def set_path(record: dict[str, Any], path: str, value: Any) -> None:
         node = nxt
     node[parts[-1]] = value
 
+
+def field_catalog_text() -> str:
+    """Arabic label -> JSON path catalog for prompts and label review."""
+    lines = ["Label-to-field catalog:"]
+    for path in SCALAR_FIELD_PATHS:
+        labels = " / ".join(FIELD_LABELS_AR.get(path, [path]))
+        lines.append(f"- {labels} -> {path}")
+    lines.append("Family table columns:")
+    for key, labels in FAMILY_MEMBER_LABELS_AR.items():
+        lines.append(f"- {' / '.join(labels)} -> family_members[].{key}")
+    lines.append("Checked boxes:")
+    lines.append("- Any checked option -> checkbox_answers[] with section, question, answer, checked=true, confidence")
+    return "\n".join(lines)

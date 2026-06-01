@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from .schema import empty_record
+from .schema import empty_record, field_catalog_text
 
 SYSTEM_PROMPT = (
     "You are a careful Arabic social-case-study form transcriber. You read printed labels, "
@@ -46,6 +46,8 @@ FIELD GUIDANCE:
 - family_members rows use keys: row_index, name, relationship, age, national_id, marital_status, education_status, employment_status, health_status, notes.
 - signatures.stamp_present is true only if a visible official stamp appears.
 
+{field_catalog_text()}
+
 HARD RULES:
 - Arabic output stays Arabic; do not translate.
 - Do not summarize names or handwritten notes.
@@ -56,4 +58,3 @@ HARD RULES:
 Schema:
 {template}
 """
-
