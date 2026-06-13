@@ -200,62 +200,68 @@ class HfVlmOcrBackend:
         import torch
         from transformers import AutoModelForImageTextToText, AutoProcessor
         from huggingface_hub import snapshot_download
-        from peft import PeftModel
 
         dtype = getattr(torch, torch_dtype)
         hf_cache = os.environ.get("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
 
-        # QARI is a pure LoRA-adapter repo (no base weights, no config.json).
-        # Strategy: load the base Qwen2-VL model in bfloat16, then apply the
-        # QARI adapters via PeftModel, then merge — no bitsandbytes needed.
         raw_dir = snapshot_download(model_name, cache_dir=hf_cache)
 
-        # Copy adapter files to a writable temp dir and strip any quantization.
+        def load_model(target: str):
+            last_exc: Exception | None = None
+            for kwargs in (
+                {"attn_implementation": "sdpa"},
+                {"attn_implementation": "eager"},
+                {},
+            ):
+                try:
+                    return AutoModelForImageTextToText.from_pretrained(
+                        target,
+                        torch_dtype=dtype,
+                        device_map="auto",
+                        trust_remote_code=True,
+                        cache_dir=hf_cache,
+                        **kwargs,
+                    )
+                except Exception as exc:
+                    last_exc = exc
+            raise RuntimeError(f"Could not load HF VLM model {target}") from last_exc
+
         patched_dir = "/tmp/_hfvlm_noquant"
-        if os.path.isdir(patched_dir):
-            shutil.rmtree(patched_dir)
-        shutil.copytree(raw_dir, patched_dir, symlinks=False)
-        for root, _, files in os.walk(patched_dir):
-            for fn in files:
-                fp = os.path.join(root, fn)
-                os.chmod(fp, os.stat(fp).st_mode | 0o644)
 
-        adapter_cfg_path = os.path.join(patched_dir, "adapter_config.json")
-        with open(adapter_cfg_path) as f:
-            adapter_cfg = json.load(f)
-        adapter_cfg.pop("quantization_config", None)
-        # QARI was trained on unsloth's 4-bit base; redirect to standard base
-        # so we can load in bfloat16 without bitsandbytes.
-        base_model_id = adapter_cfg.get("base_model_name_or_path", "Qwen/Qwen2-VL-2B-Instruct")
-        if "unsloth" in base_model_id or "bnb" in base_model_id:
-            base_model_id = "Qwen/Qwen2-VL-2B-Instruct"
-        adapter_cfg["base_model_name_or_path"] = base_model_id
-        with open(adapter_cfg_path, "w") as f:
-            json.dump(adapter_cfg, f)
+        if os.path.exists(os.path.join(raw_dir, "adapter_config.json")):
+            from peft import PeftModel
 
-        # Load clean bfloat16 base model (Qwen2-VL-2B-Instruct has no quant config).
-        last_exc: Exception | None = None
-        for attn_impl in ("sdpa", "eager"):
-            try:
-                base = AutoModelForImageTextToText.from_pretrained(
-                    base_model_id,
-                    torch_dtype=dtype,
-                    device_map="auto",
-                    trust_remote_code=True,
-                    attn_implementation=attn_impl,
-                    cache_dir=hf_cache,
-                )
-                break
-            except (ValueError, ImportError) as exc:
-                last_exc = exc
+            # QARI is a pure LoRA-adapter repo. Copy the adapter to a writable
+            # temp dir, strip quantization, load a clean bf16 base, then merge.
+            if os.path.isdir(patched_dir):
+                shutil.rmtree(patched_dir)
+            shutil.copytree(raw_dir, patched_dir, symlinks=False)
+            for root, _, files in os.walk(patched_dir):
+                for fn in files:
+                    fp = os.path.join(root, fn)
+                    os.chmod(fp, os.stat(fp).st_mode | 0o644)
+
+            adapter_cfg_path = os.path.join(patched_dir, "adapter_config.json")
+            with open(adapter_cfg_path) as f:
+                adapter_cfg = json.load(f)
+            adapter_cfg.pop("quantization_config", None)
+            base_model_id = adapter_cfg.get("base_model_name_or_path", "Qwen/Qwen2-VL-2B-Instruct")
+            if "unsloth" in base_model_id or "bnb" in base_model_id:
+                base_model_id = "Qwen/Qwen2-VL-2B-Instruct"
+            adapter_cfg["base_model_name_or_path"] = base_model_id
+            with open(adapter_cfg_path, "w") as f:
+                json.dump(adapter_cfg, f)
+
+            base = load_model(base_model_id)
+            peft_model = PeftModel.from_pretrained(base, patched_dir)
+            self.model = peft_model.merge_and_unload()
+            processor_source = patched_dir
         else:
-            raise RuntimeError(f"Could not load base model {base_model_id}") from last_exc
+            self.model = load_model(model_name)
+            processor_source = model_name
 
-        # Apply QARI LoRA adapters and merge for fast inference.
-        peft_model = PeftModel.from_pretrained(base, patched_dir)
-        self.model = peft_model.merge_and_unload()
         self.model.eval()
-        self.processor = AutoProcessor.from_pretrained(patched_dir, trust_remote_code=True)
+        self.processor = AutoProcessor.from_pretrained(processor_source, trust_remote_code=True, cache_dir=hf_cache)
 
     def read(self, image: Image.Image, *, field_name: str) -> str:
         import torch
