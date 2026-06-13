@@ -119,7 +119,9 @@ class EasyOcrBackend:
         self.reader = easyocr.Reader(languages or ["ar", "en"], gpu=gpu, verbose=False)
 
     def read(self, image: Image.Image, *, field_name: str) -> str:
-        results = self.reader.readtext(image, detail=0, paragraph=False)
+        import numpy as np
+
+        results = self.reader.readtext(np.array(image.convert("RGB")), detail=0, paragraph=False)
         return " ".join(str(item) for item in results)
 
 
