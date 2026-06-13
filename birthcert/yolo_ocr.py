@@ -26,6 +26,20 @@ from .schema import empty_record, set_path
 from .validate import normalize_digits, validate_record
 
 
+def _looks_degenerate(text: str, threshold: int = 5) -> bool:
+    """Return True if the model output looks like a hallucination or collapse."""
+    if not text or not text.strip():
+        return True
+    # Repeated single character — e.g. "!!!!!" or "......"
+    if re.search(r"(.)\1{" + str(threshold) + r",}", text):
+        return True
+    # Almost no Arabic / digit content → likely garbage
+    good = sum(1 for c in text if "؀" <= c <= "ۿ" or c.isdigit() or c in "/-.، ")
+    if len(text.strip()) > 4 and good / max(len(text), 1) < 0.15:
+        return True
+    return False
+
+
 CLASS_TO_PATH = {
     "child_national_id": "ids.child_national_id",
     "child_name": "personal_and_other.child.name",
@@ -41,11 +55,16 @@ CLASS_TO_PATH = {
 
 
 FIELD_PROMPTS = {
-    "child_national_id": "Read only the national ID digits in this crop. Return digits only.",
-    "registration_number": "Read only the registration number in this crop. Return the value only.",
-    "registration_date": "Read only the registration date in this crop. Return the date only.",
-    "issue_date": "Read only the issue date in this crop. Return the date only.",
-    "serial_number": "Read only the serial number in this crop. Return digits only.",
+    "child_national_id": "اقرأ رقم الهوية الوطنية في هذه الصورة. أعد الأرقام فقط بدون أي نص آخر.",
+    "child_name": "اقرأ اسم الطفل في هذه الصورة. أعد الاسم فقط بدون أي نص آخر.",
+    "date_of_birth": "اقرأ تاريخ الميلاد في هذه الصورة. أعد التاريخ فقط بدون أي نص آخر.",
+    "place_of_birth": "اقرأ محل الميلاد في هذه الصورة. أعد المكان فقط بدون أي نص آخر.",
+    "father_name": "اقرأ اسم الأب في هذه الصورة. أعد الاسم فقط بدون أي نص آخر.",
+    "mother_name": "اقرأ اسم الأم في هذه الصورة. أعد الاسم فقط بدون أي نص آخر.",
+    "registration_number": "اقرأ رقم القيد في هذه الصورة. أعد الرقم فقط بدون أي نص آخر.",
+    "registration_date": "اقرأ تاريخ القيد في هذه الصورة. أعد التاريخ فقط بدون أي نص آخر.",
+    "issue_date": "اقرأ تاريخ الإصدار في هذه الصورة. أعد التاريخ فقط بدون أي نص آخر.",
+    "serial_number": "اقرأ الرقم التسلسلي في هذه الصورة. أعد الأرقام فقط بدون أي نص آخر.",
 }
 
 
@@ -66,6 +85,18 @@ def _clean_ocr_text(text: str) -> str | None:
     text = re.sub(r"[\r\n\t]+", " ", text)
     text = re.sub(r"\s+", " ", text).strip(" .,:;،")
     return text or None
+
+
+def _repair_mojibake(text: str) -> str:
+    if not text or not re.search(r"[\u0080-\u00ff]", text):
+        return text
+    try:
+        repaired = text.encode("latin1").decode("utf-8")
+    except UnicodeError:
+        return text
+    if re.search(r"[\u0600-\u06ff]", repaired):
+        return repaired
+    return text
 
 
 def _digits_only(text: str) -> str | None:
@@ -91,7 +122,7 @@ def normalize_field_text(field_name: str, text: str) -> str | None:
     return _clean_ocr_text(text)
 
 
-def padded_crop(image: Image.Image, box: tuple[float, float, float, float], pad_ratio: float = 0.18) -> Image.Image:
+def padded_crop(image: Image.Image, box: tuple[float, float, float, float], pad_ratio: float = 0.30) -> Image.Image:
     width, height = image.size
     left, top, right, bottom = box
     bw = right - left
@@ -158,55 +189,80 @@ class PaddleOcrBackend:
 
 
 class HfVlmOcrBackend:
-    """Generic HuggingFace VLM OCR backend.
+    """HuggingFace VLM OCR backend — works with QARI, Qwen2-VL, Qwen2.5-VL.
 
-    This is intentionally configurable because QARI/Baseer/Arabic-GLM model IDs
-    vary by release. Pass --ocr-model <hf-model-id>.
+    Pass --ocr-model <hf-model-id>, e.g. NAMAA-Space/Qari-OCR-0.2.2.1-VL-2B-Instruct.
+    Always loads in bfloat16 (avoids the fp16 "!!!!" collapse on Qwen-family models).
     """
 
     def __init__(self, model_name: str, *, torch_dtype: str = "bfloat16") -> None:
+        import json, os, shutil
         import torch
         from transformers import AutoModelForImageTextToText, AutoProcessor
+        from huggingface_hub import snapshot_download
+        from peft import PeftModel
 
         dtype = getattr(torch, torch_dtype)
-        try:
-            from transformers import Qwen2_5_VLForConditionalGeneration
+        hf_cache = os.environ.get("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
 
-            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-                model_name,
-                torch_dtype=dtype,
-                device_map="auto",
-                trust_remote_code=True,
-                attn_implementation="eager",
-            )
-        except Exception:
+        # QARI is a pure LoRA-adapter repo (no base weights, no config.json).
+        # Strategy: load the base Qwen2-VL model in bfloat16, then apply the
+        # QARI adapters via PeftModel, then merge — no bitsandbytes needed.
+        raw_dir = snapshot_download(model_name, cache_dir=hf_cache)
+
+        # Copy adapter files to a writable temp dir and strip any quantization.
+        patched_dir = "/tmp/_hfvlm_noquant"
+        if os.path.isdir(patched_dir):
+            shutil.rmtree(patched_dir)
+        shutil.copytree(raw_dir, patched_dir, symlinks=False)
+        for root, _, files in os.walk(patched_dir):
+            for fn in files:
+                fp = os.path.join(root, fn)
+                os.chmod(fp, os.stat(fp).st_mode | 0o644)
+
+        adapter_cfg_path = os.path.join(patched_dir, "adapter_config.json")
+        with open(adapter_cfg_path) as f:
+            adapter_cfg = json.load(f)
+        adapter_cfg.pop("quantization_config", None)
+        # QARI was trained on unsloth's 4-bit base; redirect to standard base
+        # so we can load in bfloat16 without bitsandbytes.
+        base_model_id = adapter_cfg.get("base_model_name_or_path", "Qwen/Qwen2-VL-2B-Instruct")
+        if "unsloth" in base_model_id or "bnb" in base_model_id:
+            base_model_id = "Qwen/Qwen2-VL-2B-Instruct"
+        adapter_cfg["base_model_name_or_path"] = base_model_id
+        with open(adapter_cfg_path, "w") as f:
+            json.dump(adapter_cfg, f)
+
+        # Load clean bfloat16 base model (Qwen2-VL-2B-Instruct has no quant config).
+        last_exc: Exception | None = None
+        for attn_impl in ("sdpa", "eager"):
             try:
-                from transformers import Qwen2VLForConditionalGeneration
+                base = AutoModelForImageTextToText.from_pretrained(
+                    base_model_id,
+                    torch_dtype=dtype,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    attn_implementation=attn_impl,
+                    cache_dir=hf_cache,
+                )
+                break
+            except (ValueError, ImportError) as exc:
+                last_exc = exc
+        else:
+            raise RuntimeError(f"Could not load base model {base_model_id}") from last_exc
 
-                self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-                    model_name,
-                    torch_dtype=dtype,
-                    device_map="auto",
-                    trust_remote_code=True,
-                    attn_implementation="eager",
-                )
-            except Exception:
-                self.model = AutoModelForImageTextToText.from_pretrained(
-                    model_name,
-                    torch_dtype=dtype,
-                    device_map="auto",
-                    trust_remote_code=True,
-                    attn_implementation="eager",
-                )
+        # Apply QARI LoRA adapters and merge for fast inference.
+        peft_model = PeftModel.from_pretrained(base, patched_dir)
+        self.model = peft_model.merge_and_unload()
         self.model.eval()
-        self.processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
+        self.processor = AutoProcessor.from_pretrained(patched_dir, trust_remote_code=True)
 
     def read(self, image: Image.Image, *, field_name: str) -> str:
         import torch
 
         prompt = FIELD_PROMPTS.get(
             field_name,
-            "اقرأ النص العربي المطبوع داخل الصورة فقط. أعد قيمة الحقل فقط بدون شرح وبدون أي رموز إضافية.",
+            "اقرأ النص العربي المطبوع داخل الصورة فقط. أعد قيمة الحقل فقط بدون شرح.",
         )
         messages = [{
             "role": "user",
@@ -221,14 +277,16 @@ class HfVlmOcrBackend:
         with torch.inference_mode():
             generated = self.model.generate(
                 **inputs,
-                max_new_tokens=40,
+                max_new_tokens=64,
                 do_sample=False,
-                repetition_penalty=1.25,
+                repetition_penalty=1.3,
+                no_repeat_ngram_size=5,
                 pad_token_id=self.processor.tokenizer.eos_token_id,
             )
         trimmed = generated[:, inputs["input_ids"].shape[1]:]
         out = self.processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-        return out[0] if out else ""
+        result = (out[0] if out else "").strip()
+        return "" if _looks_degenerate(result) else result
 
 
 def make_ocr_backend(name: str, *, model_name: str | None = None, gpu: bool = True) -> OcrBackend:
@@ -308,13 +366,15 @@ def extract_one(
         if crops_dir:
             crop.save(crops_dir / f"{image_path.stem}_{field_name}.png")
 
-        raw_text = ocr.read(crop, field_name=field_name)
-        value = normalize_field_text(field_name, raw_text)
+        raw_text = _repair_mojibake(ocr.read(crop, field_name=field_name))
+        degenerate = _looks_degenerate(raw_text)
+        value = normalize_field_text(field_name, raw_text) if not degenerate else None
         raw_items.append({
             "field": field_name,
             "confidence": det.confidence,
             "box_xyxy": det.box_xyxy,
             "ocr_raw": raw_text,
+            "degenerate": degenerate,
             "value": value,
         })
         if value is not None:
@@ -391,7 +451,10 @@ def main() -> None:
     args = parser.parse_args()
 
     image_root = Path(args.images)
-    image_paths = sorted(list(image_root.glob("*.jpeg")) + list(image_root.glob("*.jpg")) + list(image_root.glob("*.png")))
+    if image_root.is_file():
+        image_paths = [image_root]
+    else:
+        image_paths = sorted(list(image_root.glob("*.jpeg")) + list(image_root.glob("*.jpg")) + list(image_root.glob("*.png")))
     if not image_paths:
         raise SystemExit(f"no images found in {image_root}")
 
