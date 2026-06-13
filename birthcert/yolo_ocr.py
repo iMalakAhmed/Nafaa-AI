@@ -137,13 +137,24 @@ class HfVlmOcrBackend:
         from transformers import AutoModelForImageTextToText, AutoProcessor
 
         dtype = getattr(torch, torch_dtype)
-        self.model = AutoModelForImageTextToText.from_pretrained(
-            model_name,
-            torch_dtype=dtype,
-            device_map="auto",
-            trust_remote_code=True,
-            attn_implementation="eager",
-        )
+        try:
+            from transformers import Qwen2VLForConditionalGeneration
+
+            self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+                model_name,
+                torch_dtype=dtype,
+                device_map="auto",
+                trust_remote_code=True,
+                attn_implementation="eager",
+            )
+        except Exception:
+            self.model = AutoModelForImageTextToText.from_pretrained(
+                model_name,
+                torch_dtype=dtype,
+                device_map="auto",
+                trust_remote_code=True,
+                attn_implementation="eager",
+            )
         self.model.eval()
         self.processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
 
@@ -152,7 +163,7 @@ class HfVlmOcrBackend:
 
         prompt = FIELD_PROMPTS.get(
             field_name,
-            "Read the Arabic printed text in this crop. Return only the field value, with no explanation.",
+            "Read the Arabic printed text in this crop. Return only the field value. Do not explain.",
         )
         messages = [{
             "role": "user",

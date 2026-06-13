@@ -147,6 +147,16 @@ def run_birthcert_yolo_ocr(
         "data/birth_cert_labels",
     ]
     eval_proc = subprocess.run(eval_cmd, cwd=PROJECT_DIR, check=True, capture_output=True, text=True)
+    ocr_eval_cmd = [
+        sys.executable,
+        "-m",
+        "birthcert.evaluate_yolo_ocr_text",
+        "--reads",
+        "outputs/birthcert_yolo_ocr/field_reads",
+        "--labels",
+        "data/birth_cert_labels",
+    ]
+    ocr_eval_proc = subprocess.run(ocr_eval_cmd, cwd=PROJECT_DIR, check=True, capture_output=True, text=True)
 
     summary = {
         "weights": str(weights),
@@ -154,6 +164,7 @@ def run_birthcert_yolo_ocr(
         "field_reads_dir": "outputs/birthcert_yolo_ocr/field_reads",
         "crops_dir": "outputs/birthcert_yolo_ocr/crops",
         "evaluation": eval_proc.stdout,
+        "ocr_text_evaluation": ocr_eval_proc.stdout,
     }
     summary_path = Path(PROJECT_DIR) / "outputs" / "birthcert_yolo_ocr" / "summary.json"
     summary_path.parent.mkdir(parents=True, exist_ok=True)
