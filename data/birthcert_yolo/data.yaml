@@ -1,0 +1,14 @@
+path: C:/Users/ASUS/Desktop/GRAD/AI/Case-Study-Parsing-/data/birthcert_yolo
+train: images/train
+val: images/val
+names:
+  0: child_national_id
+  1: child_name
+  2: date_of_birth
+  3: place_of_birth
+  4: father_name
+  5: mother_name
+  6: registration_number
+  7: registration_date
+  8: issue_date
+  9: serial_number
