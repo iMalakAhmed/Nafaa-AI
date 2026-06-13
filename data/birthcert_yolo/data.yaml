@@ -1,4 +1,4 @@
-path: C:/Users/ASUS/Desktop/GRAD/AI/Case-Study-Parsing-/data/birthcert_yolo
+path: data/birthcert_yolo
 train: images/train
 val: images/val
 names:
