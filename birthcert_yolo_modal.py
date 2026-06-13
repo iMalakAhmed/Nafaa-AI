@@ -119,7 +119,23 @@ def run_birthcert_yolo_ocr(
             raise ValueError("ocr_model is required when ocr_backend='hf-vlm'")
         extract_cmd.extend(["--ocr-model", ocr_model])
 
-    subprocess.run(extract_cmd, cwd=PROJECT_DIR, check=True)
+    extract_proc = subprocess.run(extract_cmd, cwd=PROJECT_DIR, capture_output=True, text=True)
+    if extract_proc.returncode != 0:
+        error_dir = Path(PROJECT_DIR) / "outputs" / "birthcert_yolo_ocr"
+        error_dir.mkdir(parents=True, exist_ok=True)
+        error_path = error_dir / "extract_error.txt"
+        error_path.write_text(
+            "COMMAND:\n"
+            + " ".join(extract_cmd)
+            + "\n\nSTDOUT:\n"
+            + extract_proc.stdout
+            + "\n\nSTDERR:\n"
+            + extract_proc.stderr,
+            encoding="utf-8",
+        )
+        output_volume.commit()
+        tail = (extract_proc.stderr or extract_proc.stdout)[-4000:]
+        raise RuntimeError(f"YOLO/OCR extraction failed. Error log: {error_path}\n{tail}")
 
     eval_cmd = [
         sys.executable,

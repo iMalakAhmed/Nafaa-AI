@@ -116,7 +116,7 @@ class EasyOcrBackend:
     def __init__(self, languages: list[str] | None = None, gpu: bool = True) -> None:
         import easyocr
 
-        self.reader = easyocr.Reader(languages or ["ar", "en"], gpu=gpu)
+        self.reader = easyocr.Reader(languages or ["ar", "en"], gpu=gpu, verbose=False)
 
     def read(self, image: Image.Image, *, field_name: str) -> str:
         results = self.reader.readtext(image, detail=0, paragraph=False)
