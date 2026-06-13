@@ -5,6 +5,7 @@ the existing birth-certificate JSON schema and validation layer.
 
 Supported OCR backends:
   - easyocr: quick local baseline for Arabic/English printed text.
+  - paddleocr: stronger traditional OCR baseline for Arabic printed text.
   - hf-vlm: HuggingFace vision-language OCR model, configured by --ocr-model.
             Use this for QARI-OCR, Baseer, Arabic-GLM, or similar models when
             their exact HuggingFace model IDs are available.
@@ -19,7 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageFilter, ImageOps
 
 from .schema import empty_record, set_path
 from .validate import normalize_digits, validate_record
@@ -90,7 +91,7 @@ def normalize_field_text(field_name: str, text: str) -> str | None:
     return _clean_ocr_text(text)
 
 
-def padded_crop(image: Image.Image, box: tuple[float, float, float, float], pad_ratio: float = 0.04) -> Image.Image:
+def padded_crop(image: Image.Image, box: tuple[float, float, float, float], pad_ratio: float = 0.18) -> Image.Image:
     width, height = image.size
     left, top, right, bottom = box
     bw = right - left
@@ -104,12 +105,15 @@ def padded_crop(image: Image.Image, box: tuple[float, float, float, float], pad_
     return image.crop((left, top, right, bottom))
 
 
-def enhance_crop(crop: Image.Image, min_height: int = 80) -> Image.Image:
+def enhance_crop(crop: Image.Image, min_height: int = 180) -> Image.Image:
     crop = ImageOps.exif_transpose(crop).convert("RGB")
     if crop.height < min_height:
         scale = min_height / max(1, crop.height)
         crop = crop.resize((round(crop.width * scale), round(crop.height * scale)), Image.LANCZOS)
-    return ImageOps.autocontrast(crop, cutoff=1)
+    crop = ImageOps.grayscale(crop)
+    crop = ImageOps.autocontrast(crop, cutoff=1)
+    crop = crop.filter(ImageFilter.UnsharpMask(radius=1.2, percent=160, threshold=2))
+    return crop.convert("RGB")
 
 
 class EasyOcrBackend:
@@ -125,6 +129,34 @@ class EasyOcrBackend:
         return " ".join(str(item) for item in results)
 
 
+class PaddleOcrBackend:
+    def __init__(self, lang: str = "ar") -> None:
+        from paddleocr import PaddleOCR
+
+        self.ocr = PaddleOCR(
+            lang=lang,
+            use_doc_orientation_classify=False,
+            use_doc_unwarping=False,
+            use_textline_orientation=False,
+        )
+
+    def read(self, image: Image.Image, *, field_name: str) -> str:
+        import numpy as np
+
+        outputs = self.ocr.predict(np.array(image.convert("RGB")))
+        texts: list[str] = []
+        for item in outputs:
+            if isinstance(item, dict):
+                texts.extend(str(text) for text in item.get("rec_texts", []) if text)
+            elif isinstance(item, list):
+                for row in item:
+                    try:
+                        texts.append(str(row[1][0]))
+                    except Exception:
+                        continue
+        return " ".join(texts)
+
+
 class HfVlmOcrBackend:
     """Generic HuggingFace VLM OCR backend.
 
@@ -132,15 +164,15 @@ class HfVlmOcrBackend:
     vary by release. Pass --ocr-model <hf-model-id>.
     """
 
-    def __init__(self, model_name: str, *, torch_dtype: str = "float16") -> None:
+    def __init__(self, model_name: str, *, torch_dtype: str = "bfloat16") -> None:
         import torch
         from transformers import AutoModelForImageTextToText, AutoProcessor
 
         dtype = getattr(torch, torch_dtype)
         try:
-            from transformers import Qwen2VLForConditionalGeneration
+            from transformers import Qwen2_5_VLForConditionalGeneration
 
-            self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
                 model_name,
                 torch_dtype=dtype,
                 device_map="auto",
@@ -148,13 +180,24 @@ class HfVlmOcrBackend:
                 attn_implementation="eager",
             )
         except Exception:
-            self.model = AutoModelForImageTextToText.from_pretrained(
-                model_name,
-                torch_dtype=dtype,
-                device_map="auto",
-                trust_remote_code=True,
-                attn_implementation="eager",
-            )
+            try:
+                from transformers import Qwen2VLForConditionalGeneration
+
+                self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+                    model_name,
+                    torch_dtype=dtype,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    attn_implementation="eager",
+                )
+            except Exception:
+                self.model = AutoModelForImageTextToText.from_pretrained(
+                    model_name,
+                    torch_dtype=dtype,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    attn_implementation="eager",
+                )
         self.model.eval()
         self.processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
 
@@ -163,7 +206,7 @@ class HfVlmOcrBackend:
 
         prompt = FIELD_PROMPTS.get(
             field_name,
-            "Read the Arabic printed text in this crop. Return only the field value. Do not explain.",
+            "اقرأ النص العربي المطبوع داخل الصورة فقط. أعد قيمة الحقل فقط بدون شرح وبدون أي رموز إضافية.",
         )
         messages = [{
             "role": "user",
@@ -178,9 +221,9 @@ class HfVlmOcrBackend:
         with torch.inference_mode():
             generated = self.model.generate(
                 **inputs,
-                max_new_tokens=96,
+                max_new_tokens=40,
                 do_sample=False,
-                repetition_penalty=1.05,
+                repetition_penalty=1.25,
                 pad_token_id=self.processor.tokenizer.eos_token_id,
             )
         trimmed = generated[:, inputs["input_ids"].shape[1]:]
@@ -191,6 +234,8 @@ class HfVlmOcrBackend:
 def make_ocr_backend(name: str, *, model_name: str | None = None, gpu: bool = True) -> OcrBackend:
     if name == "easyocr":
         return EasyOcrBackend(gpu=gpu)
+    if name == "paddleocr":
+        return PaddleOcrBackend()
     if name == "hf-vlm":
         if not model_name:
             raise ValueError("--ocr-model is required for --ocr-backend hf-vlm")
@@ -339,7 +384,7 @@ def main() -> None:
     parser.add_argument("--out", default="outputs/birthcert_yolo_ocr/records")
     parser.add_argument("--raw", default="outputs/birthcert_yolo_ocr/raw")
     parser.add_argument("--crops", default="outputs/birthcert_yolo_ocr/crops")
-    parser.add_argument("--ocr-backend", choices=["easyocr", "hf-vlm"], default="easyocr")
+    parser.add_argument("--ocr-backend", choices=["easyocr", "paddleocr", "hf-vlm"], default="easyocr")
     parser.add_argument("--ocr-model", default=None, help="HuggingFace OCR/VLM model ID for QARI/Baseer/Arabic-GLM/etc.")
     parser.add_argument("--conf", type=float, default=0.25)
     parser.add_argument("--cpu", action="store_true", help="Disable GPU for OCR backends that support CPU mode.")

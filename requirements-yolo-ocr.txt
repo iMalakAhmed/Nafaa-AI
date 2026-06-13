@@ -1,5 +1,7 @@
 ultralytics>=8.3.0
 easyocr>=1.7.1
+paddleocr>=3.0.0
+paddlepaddle>=3.0.0
 opencv-python>=4.9.0
 Pillow>=10.0.0
 torch>=2.4.0

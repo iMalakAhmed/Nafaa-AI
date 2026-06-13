@@ -32,7 +32,7 @@ def main() -> None:
     parser.add_argument("--imgsz", type=int, default=960)
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--name", default="field_detector")
-    parser.add_argument("--ocr-backend", choices=["easyocr", "hf-vlm"], default="easyocr")
+    parser.add_argument("--ocr-backend", choices=["easyocr", "paddleocr", "hf-vlm"], default="easyocr")
     parser.add_argument("--ocr-model", default=None)
     parser.add_argument("--images", default="data/birthcert_yolo/images/val")
     parser.add_argument("--conf", type=float, default=0.25)
