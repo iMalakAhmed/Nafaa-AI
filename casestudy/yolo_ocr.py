@@ -65,15 +65,18 @@ def _build_field_prompts() -> dict[str, str]:
         labels = FIELD_LABELS_AR.get(path, [path])
         label_str = " / ".join(labels)
         prompts[path] = (
-            f"من النموذج في الصورة، ما هي قيمة الحقل: '{label_str}'؟ "
-            "أعد القيمة فقط بدون أي كلام إضافي. إذا لم تجد القيمة أجب بـ: لا يوجد"
+            "Read the Arabic form image and extract this field only.\n"
+            f"Field path: {path}\n"
+            f"Field label: {label_str}\n"
+            "Return only the field value. Do not include labels, explanations, bullets, or JSON. "
+            "If the value is not visible, return exactly: NOT_FOUND"
         )
     return prompts
 
 
 FIELD_PROMPTS = _build_field_prompts()
 
-_NULL_ANSWERS = {"لا يوجد", "لا يوجد.", "غير محدد", "غير متوفر", "لا توجد", "-", "--", ""}
+_NULL_ANSWERS = {"", "-", "--", "N/A", "NA", "NOT_FOUND", "not found", "Not found", "لا يوجد", "لا يوجد.", "غير محدد", "غير متوفر", "لا توجد"}
 
 
 class HfVlmBackend:
@@ -149,13 +152,19 @@ class HfVlmBackend:
     def ask(self, image: Image.Image, prompt: str, *, max_new_tokens: int = 80) -> str:
         import torch
 
-        messages = [{
-            "role": "user",
-            "content": [
-                {"type": "image", "image": image},
-                {"type": "text", "text": prompt},
-            ],
-        }]
+        messages = [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": _FULL_PAGE_SYSTEM}],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image", "image": image},
+                    {"type": "text", "text": prompt},
+                ],
+            },
+        ]
         text = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = self.processor(text=[text], images=[image], padding=True, return_tensors="pt")
         inputs = inputs.to(self._device)
