@@ -19,6 +19,23 @@ PROJECT_DIR = "/root/project"
 OUTPUT_VOL = "birthcert-outputs"
 HF_CACHE_VOL = "case-study-hf-cache"
 
+HF_MODEL_PRESETS = {
+    "hf_hwr": [
+        "sherif1313/Arabic-English-handwritten-OCR-v3",
+        "sherif1313/Arabic-handwritten-OCR-4bit-Qwen2.5-VL-3B-v2",
+        "sherif1313/Arabic-English-handwritten-OCR-Qwen3-VL-4B",
+    ],
+    "qari": [
+        "NAMAA-Space/Qari-OCR-0.2.2.1-VL-2B-Instruct",
+    ],
+    "open_arabic": [
+        "sherif1313/Arabic-English-handwritten-OCR-v3",
+        "sherif1313/Arabic-handwritten-OCR-4bit-Qwen2.5-VL-3B-v2",
+        "sherif1313/Arabic-English-handwritten-OCR-Qwen3-VL-4B",
+        "NAMAA-Space/Qari-OCR-0.2.2.1-VL-2B-Instruct",
+    ],
+}
+
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -165,9 +182,32 @@ def run_hwr_benchmark(
     return summary
 
 
+def _safe_model_tag(model: str) -> str:
+    return model.replace("/", "_").replace(":", "_").replace(".", "_")
+
+
+def _models_to_run(model: str, models: str, preset: str) -> list[str]:
+    selected: list[str] = []
+    if preset:
+        if preset not in HF_MODEL_PRESETS:
+            available = ", ".join(sorted(HF_MODEL_PRESETS))
+            raise ValueError(f"Unknown preset '{preset}'. Available presets: {available}")
+        selected.extend(HF_MODEL_PRESETS[preset])
+    if models:
+        selected.extend(item.strip() for item in models.split(",") if item.strip())
+    if model:
+        selected.append(model)
+    if not selected:
+        available = ", ".join(sorted(HF_MODEL_PRESETS))
+        raise ValueError(f"Pass --model, --models, or --preset. Available presets: {available}")
+    return list(dict.fromkeys(selected))
+
+
 @app.local_entrypoint()
 def main(
-    model: str,
+    model: str = "",
+    models: str = "",
+    preset: str = "",
     tag: str = "",
     images: str = "data/raw_images/DataSet/cast study",
     ids: str = "",
@@ -175,19 +215,33 @@ def main(
     fields: str = "",
     download: bool = True,
 ):
-    safe_tag = tag or model.replace("/", "_").replace(":", "_").replace(".", "_")
-    summary = run_hwr_benchmark.remote(
-        model=model,
-        tag=safe_tag,
-        images=images,
-        ids=ids,
-        limit=limit or None,
-        fields=fields,
-    )
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    import subprocess
 
-    if download:
-        import subprocess
+    results: list[dict] = []
+    for index, model_id in enumerate(_models_to_run(model, models, preset), start=1):
+        safe_tag = tag or _safe_model_tag(model_id)
+        if tag and (models or preset):
+            safe_tag = f"{safe_tag}_{index}"
+        try:
+            summary = run_hwr_benchmark.remote(
+                model=model_id,
+                tag=safe_tag,
+                images=images,
+                ids=ids,
+                limit=limit or None,
+                fields=fields,
+            )
+        except Exception as exc:
+            result = {"model": model_id, "tag": safe_tag, "error": str(exc)}
+            results.append(result)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            continue
+
+        results.append(summary)
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+
+        if not download:
+            continue
 
         out_name = f"casestudy_hwr_{safe_tag}"
         dest = Path("outputs") / out_name
@@ -202,3 +256,5 @@ def main(
         else:
             print("[casestudy-hwr] download failed:", proc.stderr or proc.stdout)
             print(f"  download manually: modal volume get --force {OUTPUT_VOL} {out_name} ./outputs/{out_name}")
+
+    print(json.dumps({"results": results}, ensure_ascii=False, indent=2))
