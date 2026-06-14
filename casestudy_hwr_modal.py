@@ -8,6 +8,7 @@ Examples:
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import modal
@@ -33,6 +34,7 @@ image = (
             ".mypy_cache",
             ".pytest_cache",
             "node_modules",
+            "outputs",
         ],
     )
 )
@@ -85,8 +87,9 @@ def run_hwr_benchmark(
     selected_dir.mkdir(parents=True, exist_ok=True)
     for src in image_paths:
         dst = selected_dir / src.name
-        if not dst.exists():
-            dst.symlink_to(src)
+        if dst.exists() or dst.is_symlink():
+            dst.unlink()
+        shutil.copy2(src, dst)
 
     out_name = f"casestudy_hwr_{tag}"
     records_dir = f"outputs/{out_name}/records"
