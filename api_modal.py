@@ -127,7 +127,12 @@ def _get_national_id_reader():
         _setup()
         from nationalid.extract import NationalIdReader
 
-        _national_id_reader = NationalIdReader(gpu=True)
+        model_dir = Path(NATIONAL_ID_MODEL_DIR)
+        _national_id_reader = NationalIdReader(
+            finder_model=model_dir / "card_finder_seg.pt",
+            divider_model=model_dir / "card_divider_model.pt",
+            gpu=True,
+        )
     return _national_id_reader
 
 
