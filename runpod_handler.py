@@ -184,6 +184,17 @@ def _get_national_id_reader():
 
 
 def _extract_national_id(image_path: str, doc_id: str) -> dict:
+    backend = os.environ.get("NATIONAL_ID_BACKEND", "gemini").strip().lower()
+    if backend != "easyocr" and os.environ.get("GEMINI_API_KEY"):
+        from nationalid.extract_gemini import extract_one
+
+        return extract_one(
+            image_path,
+            api_key=_gemini_key(),
+            document_id=doc_id,
+            model=os.environ.get("GEMINI_NATIONAL_ID_MODEL", "gemini-2.5-flash-lite"),
+            max_tokens=int(os.environ.get("GEMINI_NATIONAL_ID_MAX_TOKENS", "2048")),
+        )
     return _get_national_id_reader().extract_image(image_path, document_id=doc_id)
 
 
