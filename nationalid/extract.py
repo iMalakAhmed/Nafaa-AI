@@ -54,6 +54,7 @@ def _digits(value: Any) -> str | None:
     text = _text(value)
     if not text:
         return None
+    text = text.translate(str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789"))
     digits = re.sub(r"\D+", "", text)
     return digits or None
 
