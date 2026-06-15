@@ -188,13 +188,36 @@ def _extract_national_id(image_path: str, doc_id: str) -> dict:
     if backend != "easyocr" and os.environ.get("GEMINI_API_KEY"):
         from nationalid.extract_gemini import extract_one
 
-        return extract_one(
-            image_path,
-            api_key=_gemini_key(),
-            document_id=doc_id,
-            model=os.environ.get("GEMINI_NATIONAL_ID_MODEL", "gemini-2.5-flash-lite"),
-            max_tokens=int(os.environ.get("GEMINI_NATIONAL_ID_MAX_TOKENS", "2048")),
-        )
+        try:
+            return extract_one(
+                image_path,
+                api_key=_gemini_key(),
+                document_id=doc_id,
+                model=os.environ.get("GEMINI_NATIONAL_ID_MODEL", "gemini-2.5-flash-lite"),
+                max_tokens=int(os.environ.get("GEMINI_NATIONAL_ID_MAX_TOKENS", "2048")),
+            )
+        except Exception as exc:
+            message = str(exc)
+            if "429" not in message and "RESOURCE_EXHAUSTED" not in message and "quota" not in message.lower():
+                raise
+            return {
+                "document_id": doc_id,
+                "document_type": "national_id",
+                "source_files": [image_path],
+                "full_name": None,
+                "first_name": None,
+                "remaining_name": None,
+                "address": None,
+                "street": None,
+                "city": None,
+                "governorate": None,
+                "national_id": None,
+                "raw_national_id": None,
+                "review_required": True,
+                "review_notes": [
+                    "Gemini quota exhausted for national ID extraction; retry later or use a paid/higher-quota key."
+                ],
+            }
     return _get_national_id_reader().extract_image(image_path, document_id=doc_id)
 
 

@@ -214,7 +214,7 @@ Source file: {source}
 
 def _model_candidates(model: str) -> list[str]:
     requested = [item.strip() for item in model.split(",") if item.strip()]
-    defaults = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"]
+    defaults = ["gemini-2.5-flash-lite"]
     out: list[str] = []
     for item in requested + defaults:
         if item not in out:
@@ -396,6 +396,7 @@ def extract_one(
     document_id: str | None = None,
     model: str = DEFAULT_MODEL,
     max_tokens: int = 2048,
+    use_extra_id_passes: bool | None = None,
 ) -> dict[str, Any]:
     key = api_key or os.environ.get("GEMINI_API_KEY", "")
     if not key:
@@ -406,13 +407,17 @@ def extract_one(
     source = str(image_path).replace("\\", "/")
     raw_text = _call_gemini(key, model, image_path, _prompt(doc_id, source), max_tokens)
     raw_obj = _extract_first_json_object(raw_text)
+    if use_extra_id_passes is None:
+        use_extra_id_passes = os.environ.get("NATIONAL_ID_EXTRA_ID_PASSES", "").lower() in {
+            "1", "true", "yes", "on"
+        }
     national_id, confident = _best_national_id(raw_obj.get("national_id"))
-    if not confident:
+    if use_extra_id_passes and not confident:
         crop_id = _read_id_from_crops(key, model, image_path)
         if crop_id:
             raw_obj["national_id"] = crop_id
             national_id, confident = _best_national_id(crop_id)
-    if not confident:
+    if use_extra_id_passes and not confident:
         repaired_id = _repair_invalid_id_with_context(key, model, image_path, raw_obj)
         if repaired_id:
             raw_obj["national_id"] = repaired_id
