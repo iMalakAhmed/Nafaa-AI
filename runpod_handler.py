@@ -32,8 +32,6 @@ import tempfile
 from pathlib import Path
 from urllib.request import urlopen
 
-import runpod
-
 
 PROJECT_DIR = "/app"
 NATIONAL_ID_MODEL_DIR = os.environ.get("NATIONAL_ID_MODEL_DIR", "/app/national-id-models")
@@ -229,4 +227,14 @@ def handler(job: dict) -> dict:
 
 
 if __name__ == "__main__":
-    runpod.serverless.start({"handler": handler})
+    print("[runpod] handler module loaded", flush=True)
+    try:
+        import runpod
+
+        print("[runpod] starting serverless worker", flush=True)
+        runpod.serverless.start({"handler": handler})
+    except Exception:
+        import traceback
+
+        traceback.print_exc()
+        raise

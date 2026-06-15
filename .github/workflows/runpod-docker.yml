@@ -13,6 +13,7 @@ on:
       - requirements-yolo-ocr.txt
       - birthcert/**
       - casestudy/**
+      - deploy/**
       - nationalid/**
       - .github/workflows/runpod-docker.yml
 
