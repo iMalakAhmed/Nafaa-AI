@@ -42,6 +42,7 @@ if PROJECT_DIR not in sys.path:
 
 _national_id_reader = None
 _birthcert_extractor = None
+_classifier_reader = None
 
 
 def _decode_image(inp: dict) -> tuple[bytes, str]:
@@ -99,30 +100,69 @@ def _gemini_key() -> str:
 
 
 def _classify_document(image_path: str) -> str:
-    import google.genai as genai
-    from google.genai import types
+    """Classify without Gemini.
 
-    key = _gemini_key()
-    client = genai.Client(api_key=key)
-    image_bytes = Path(image_path).read_bytes()
-    response = client.models.generate_content(
-        model=os.environ.get("GEMINI_CLASSIFIER_MODEL", "gemini-2.5-flash"),
-        contents=[
-            types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
-            types.Part.from_text(
-                text=(
-                    "Classify this document image. Return exactly one label only: "
-                    "birthcert, casestudy, national_id. No explanation."
-                )
-            ),
-        ],
-        config=types.GenerateContentConfig(max_output_tokens=16, temperature=0.0),
+    Fast path:
+    - Egyptian national IDs are landscape cards, so route them by aspect ratio.
+    - For full-page documents, OCR only the title/top band and look for stable
+      Arabic keywords.
+    """
+    from PIL import Image
+
+    image = Image.open(image_path).convert("RGB")
+    width, height = image.size
+    aspect = width / max(1, height)
+
+    if aspect >= float(os.environ.get("AUTO_NID_MIN_ASPECT", "1.25")):
+        return "national_id"
+
+    top_ratio = float(os.environ.get("AUTO_TITLE_CROP_RATIO", "0.38"))
+    top = image.crop((0, 0, width, int(height * top_ratio)))
+    text = _ocr_top_text(top)
+    compact = re.sub(r"\s+", "", text)
+
+    birth_keywords = (
+        "\u0634\u0647\u0627\u062f\u0629\u0645\u064a\u0644\u0627\u062f",  # شهادةميلاد
+        "\u0645\u064a\u0644\u0627\u062f",  # ميلاد
+        "\u0648\u0627\u0642\u0639\u0629\u0645\u064a\u0644\u0627\u062f",  # واقعةميلاد
     )
-    label = re.sub(r"[^a-zA-Z_]", "", response.text or "").lower()
-    doc_type = _normalize_document_type(label)
-    if doc_type not in {"birthcert", "casestudy", "national_id"}:
-        raise ValueError(f"Could not auto-classify document type from Gemini label: {response.text!r}")
-    return doc_type
+    case_keywords = (
+        "\u0628\u062d\u062b\u0627\u062c\u062a\u0645\u0627\u0639\u064a",  # بحثاجتماعي
+        "\u0627\u0644\u062a\u0636\u0627\u0645\u0646\u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639\u064a",  # التضامنالاجتماعي
+        "\u0627\u0644\u0648\u062d\u062f\u0629\u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639\u064a\u0629",  # الوحدةالاجتماعية
+        "\u0627\u0644\u0623\u0633\u0631\u0629",  # الأسرة
+    )
+    national_id_keywords = (
+        "\u0628\u0637\u0627\u0642\u0629\u062a\u062d\u0642\u064a\u0642\u0627\u0644\u0634\u062e\u0635\u064a\u0629",  # بطاقةتحقيقالشخصية
+        "\u0628\u0637\u0627\u0642\u0629",  # بطاقة
+    )
+
+    if any(keyword in compact for keyword in national_id_keywords):
+        return "national_id"
+    if any(keyword in compact for keyword in birth_keywords):
+        return "birthcert"
+    if any(keyword in compact for keyword in case_keywords):
+        return "casestudy"
+
+    # Conservative default for portrait paperwork: case-study has lower startup
+    # cost than Qwen birthcert and is the more common multi-page form.
+    return os.environ.get("AUTO_DEFAULT_DOCUMENT_TYPE", "casestudy")
+
+
+def _ocr_top_text(image) -> str:
+    global _classifier_reader
+    try:
+        import numpy as np
+        import easyocr
+
+        if _classifier_reader is None:
+            gpu = os.environ.get("AUTO_CLASSIFIER_OCR_GPU", "false").lower() in {"1", "true", "yes", "on"}
+            _classifier_reader = easyocr.Reader(["ar", "en"], gpu=gpu)
+        result = _classifier_reader.readtext(np.array(image), detail=0, paragraph=True)
+        return " ".join(str(item) for item in result)
+    except Exception as exc:
+        print(f"[auto-classifier] title OCR failed: {exc}", flush=True)
+        return ""
 
 
 def _get_birthcert_extractor():
