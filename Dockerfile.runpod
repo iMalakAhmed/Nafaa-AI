@@ -8,7 +8,7 @@ WORKDIR /app
 
 # System deps for Pillow / OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1 libglib2.0-0 libgomp1 \
+    curl libgl1 libglib2.0-0 libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Python deps
@@ -17,14 +17,25 @@ COPY requirements-yolo-ocr.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir -r requirements-yolo-ocr.txt \
     && pip install --no-cache-dir \
+        "google-genai>=1.0.0" \
         torchvision \
         "peft>=0.12.0" \
         "bitsandbytes>=0.46.1" \
         runpod
 
+ENV NATIONAL_ID_MODEL_DIR=/app/national-id-models
+RUN mkdir -p ${NATIONAL_ID_MODEL_DIR} \
+    && curl -L --retry 5 --retry-delay 2 \
+        https://raw.githubusercontent.com/ebrahimabdelghfar/National-ID-Reader/main/card_finder_seg.pt \
+        -o ${NATIONAL_ID_MODEL_DIR}/card_finder_seg.pt \
+    && curl -L --retry 5 --retry-delay 2 \
+        https://raw.githubusercontent.com/ebrahimabdelghfar/National-ID-Reader/main/card_divider_model.pt \
+        -o ${NATIONAL_ID_MODEL_DIR}/card_divider_model.pt
+
 # Project source (no data, no outputs, no adapters — those go on a network volume)
 COPY birthcert/   birthcert/
 COPY casestudy/   casestudy/
+COPY nationalid/  nationalid/
 COPY tools/       tools/
 COPY runpod_handler.py .
 
