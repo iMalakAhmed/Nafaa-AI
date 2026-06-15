@@ -22,14 +22,13 @@ from fastapi.responses import JSONResponse
 
 
 PROJECT_DIR = "/root/project"
-OUTPUT_VOL = "birthcert-outputs"
 HF_CACHE_VOL = "case-study-hf-cache"
-NATIONAL_ID_MODEL_VOL = "national-id-reader-models"
+NATIONAL_ID_MODEL_DIR = "/root/national-id-models"
 
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
-    .apt_install("libgl1", "libglib2.0-0")
+    .apt_install("curl", "libgl1", "libglib2.0-0")
     .pip_install_from_requirements("requirements.txt")
     .pip_install(
         "fastapi>=0.115.0",
@@ -38,6 +37,15 @@ image = (
         "opencv-python-headless>=4.9.0",
         "easyocr>=1.7.1",
         "ultralytics>=8.3.0",
+    )
+    .run_commands(
+        f"mkdir -p {NATIONAL_ID_MODEL_DIR}",
+        "curl -L --retry 5 --retry-delay 2 "
+        "https://raw.githubusercontent.com/ebrahimabdelghfar/National-ID-Reader/main/card_finder_seg.pt "
+        f"-o {NATIONAL_ID_MODEL_DIR}/card_finder_seg.pt",
+        "curl -L --retry 5 --retry-delay 2 "
+        "https://raw.githubusercontent.com/ebrahimabdelghfar/National-ID-Reader/main/card_divider_model.pt "
+        f"-o {NATIONAL_ID_MODEL_DIR}/card_divider_model.pt",
     )
     .add_local_dir(
         ".",
@@ -56,9 +64,7 @@ image = (
     )
 )
 
-output_volume = modal.Volume.from_name(OUTPUT_VOL, create_if_missing=True)
 hf_volume = modal.Volume.from_name(HF_CACHE_VOL, create_if_missing=True)
-national_id_model_volume = modal.Volume.from_name(NATIONAL_ID_MODEL_VOL, create_if_missing=True)
 
 try:
     gemini_secret = modal.Secret.from_name("gemini-api-key")
@@ -206,13 +212,11 @@ function_kwargs = {
     "timeout": 60 * 10,
     "scaledown_window": 300,
     "env": {
-        "NATIONAL_ID_MODEL_DIR": "/root/national-id-models",
+        "NATIONAL_ID_MODEL_DIR": NATIONAL_ID_MODEL_DIR,
         "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True",
     },
     "volumes": {
-        f"{PROJECT_DIR}/outputs": output_volume,
         "/root/.cache/huggingface": hf_volume,
-        "/root/national-id-models": national_id_model_volume,
     },
 }
 if gemini_secret is not None:
