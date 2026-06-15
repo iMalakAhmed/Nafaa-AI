@@ -131,6 +131,10 @@ def _classify_document(image_path: str) -> str:
         "\u0627\u0644\u062a\u0636\u0627\u0645\u0646\u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639\u064a",  # التضامنالاجتماعي
         "\u0627\u0644\u0648\u062d\u062f\u0629\u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639\u064a\u0629",  # الوحدةالاجتماعية
         "\u0627\u0644\u0623\u0633\u0631\u0629",  # الأسرة
+        "\u0627\u0644\u062d\u0627\u0644\u0629\u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639",  # الحالةالاجتماع...
+        "\u0627\u0644\u0623\u0645\u0644\u0627\u0643",  # الأملاك
+        "\u0627\u0644\u0627\u0639\u0627\u0642\u0629",  # الاعاقة
+        "\u0627\u0644\u0635\u062d\u064a\u0629",  # الصحية
     )
     national_id_keywords = (
         "\u0628\u0637\u0627\u0642\u0629\u062a\u062d\u0642\u064a\u0642\u0627\u0644\u0634\u062e\u0635\u064a\u0629",  # بطاقةتحقيقالشخصية
@@ -144,9 +148,16 @@ def _classify_document(image_path: str) -> str:
     if any(keyword in compact for keyword in case_keywords):
         return "casestudy"
 
-    # Conservative default for portrait paperwork: case-study has lower startup
-    # cost than Qwen birthcert and is the more common multi-page form.
-    return os.environ.get("AUTO_DEFAULT_DOCUMENT_TYPE", "casestudy")
+    fallback = os.environ.get("AUTO_DEFAULT_DOCUMENT_TYPE", "casestudy").strip()
+    if fallback:
+        doc_type = _normalize_document_type(fallback)
+        if doc_type in {"birthcert", "casestudy", "national_id"}:
+            return doc_type
+
+    raise ValueError(
+        "Could not auto-classify document type from layout/title. "
+        "Send document_type explicitly as one of: birthcert, casestudy, national_id."
+    )
 
 
 def _ocr_top_text(image) -> str:
