@@ -5,8 +5,6 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from printeddoc.validate import repair_mojibake
-
 from .schema import FIELD_KINDS, KIND_BOOL, KIND_INT, KIND_NATIONAL_ID, empty_record, get_path, set_path
 
 _DIGIT_MAP = {
@@ -25,6 +23,36 @@ _FRONT_HINTS = ("البيانات الأولية", "بيان بجميع أفرا
 _BACK_HINTS = ("الحالة الاجتماعية", "الحالة الصحية", "الحالة الاقتصادية", "احتياجات الأسرة", "توقيع الباحث")
 _NEW_HINTS = ("نتائج بحث اجتماعي", "داخل", "خارج", "نعم", "لا", "ينطبق")
 _OLD_HINTS = ("مديرية التضامن الاجتماعي", "قطاع الشئون الاجتماعية", "الوحدة الاجتماعية")
+
+
+def _arabic_score(text: str) -> int:
+    return sum(1 for ch in text if "\u0600" <= ch <= "\u06ff")
+
+
+def repair_mojibake_text(value: str) -> str:
+    if not any(ch in value for ch in ("\u00d8", "\u00d9", "\u00db", "\u00e2")):
+        return value
+    for encoding in ("cp1252", "latin1"):
+        try:
+            fixed = value.encode(encoding).decode("utf-8")
+        except UnicodeError:
+            continue
+        if _arabic_score(fixed) > _arabic_score(value):
+            return fixed
+    return value
+
+
+def repair_mojibake(value: Any) -> Any:
+    if isinstance(value, str):
+        return repair_mojibake_text(value)
+    if isinstance(value, list):
+        return [repair_mojibake(item) for item in value]
+    if isinstance(value, dict):
+        return {
+            repair_mojibake_text(key) if isinstance(key, str) else key: repair_mojibake(item)
+            for key, item in value.items()
+        }
+    return value
 
 
 def normalize_digits(text: str) -> str:
@@ -207,4 +235,3 @@ def validate_record(raw: dict[str, Any], *, document_id: str, source_files: list
     filled = sum(1 for path in FIELD_KINDS if get_path(record, path) is not None)
     record["review_required"] = bool(raw.get("review_required")) or filled < 4 or len(uncertain) > 10
     return record
-

@@ -185,7 +185,7 @@ def _arabic_score(text: str) -> int:
 
 def repair_mojibake_text(value: str) -> str:
     """Repair common UTF-8-as-Latin-1 mojibake from model output."""
-    if not any(ch in value for ch in ("Ø", "Ù", "Û", "â")):
+    if not any(ch in value for ch in ("\u00d8", "\u00d9", "\u00db", "\u00e2")):
         return value
     for encoding in ("cp1252", "latin1"):
         try:

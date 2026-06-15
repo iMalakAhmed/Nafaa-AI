@@ -216,7 +216,7 @@ def handler(job: dict) -> dict:
         output = {"document_type": doc_type, "record": record}
         if include_raw and raw_text:
             output["raw_text"] = raw_text
-        return {"output": output}
+        return output
 
     except Exception as exc:
         return {"error": str(exc)}
