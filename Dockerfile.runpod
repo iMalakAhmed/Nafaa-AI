@@ -35,6 +35,7 @@ RUN mkdir -p ${NATIONAL_ID_MODEL_DIR} \
 # Project source (no data, no outputs, no adapters — those go on a network volume)
 COPY birthcert/   birthcert/
 COPY casestudy/   casestudy/
+COPY printeddoc/  printeddoc/
 COPY nationalid/  nationalid/
 COPY tools/       tools/
 COPY runpod_handler.py .
