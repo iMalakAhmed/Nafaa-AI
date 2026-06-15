@@ -7,7 +7,7 @@ on:
       - birth-certificate
     paths:
       - Dockerfile.runpod
-      - runpod_handler.py
+      - handler.py
       - RUNPOD_ENDPOINTS.md
       - requirements.txt
       - requirements-yolo-ocr.txt
