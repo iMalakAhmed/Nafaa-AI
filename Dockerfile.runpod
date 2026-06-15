@@ -38,9 +38,11 @@ COPY casestudy/   casestudy/
 COPY nationalid/  nationalid/
 COPY tools/       tools/
 COPY runpod_handler.py .
+COPY deploy/      deploy/
 
 # HuggingFace model cache — override at runtime by mounting a network volume here
 ENV HF_HOME=/cache/huggingface
 ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+ENV ADAPTER_BC_PATH=/app/deploy/adapters/bc_lora_v4
 
 CMD ["python", "-u", "runpod_handler.py"]

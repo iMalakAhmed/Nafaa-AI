@@ -37,11 +37,13 @@ import runpod
 
 PROJECT_DIR = "/app"
 NATIONAL_ID_MODEL_DIR = os.environ.get("NATIONAL_ID_MODEL_DIR", "/app/national-id-models")
+BC_ADAPTER_PATH = os.environ.get("ADAPTER_BC_PATH") or None
 
 if PROJECT_DIR not in sys.path:
     sys.path.insert(0, PROJECT_DIR)
 
 _national_id_reader = None
+_birthcert_extractor = None
 
 
 def _decode_image(inp: dict) -> tuple[bytes, str]:
@@ -125,16 +127,33 @@ def _classify_document(image_path: str) -> str:
     return doc_type
 
 
-def _extract_birthcert(image_path: str, doc_id: str) -> tuple[dict, str]:
-    from birthcert.extract_gemini import extract_one
+def _get_birthcert_extractor():
+    global _birthcert_extractor
+    if _birthcert_extractor is None:
+        from birthcert.extract import BirthCertExtractor
 
-    return extract_one(
+        if not BC_ADAPTER_PATH or not Path(BC_ADAPTER_PATH).exists():
+            raise FileNotFoundError(
+                "Birth certificate adapter not found. Set ADAPTER_BC_PATH to bc_lora_v4 "
+                "or bake it into /app/deploy/adapters/bc_lora_v4."
+            )
+        _birthcert_extractor = BirthCertExtractor(
+            model_name=os.environ.get("BIRTHCERT_MODEL", "Qwen/Qwen2.5-VL-3B-Instruct"),
+            torch_dtype=os.environ.get("BIRTHCERT_TORCH_DTYPE", "bfloat16"),
+            attn_implementation=os.environ.get("BIRTHCERT_ATTN", "sdpa"),
+            max_pixels=int(os.environ.get("BIRTHCERT_MAX_PIXELS", "1280000")),
+            adapter_path=BC_ADAPTER_PATH,
+        )
+    return _birthcert_extractor
+
+
+def _extract_birthcert(image_path: str, doc_id: str) -> tuple[dict, str]:
+    extractor = _get_birthcert_extractor()
+    return extractor.extract(
         image_path,
-        api_key=_gemini_key(),
         document_id=doc_id,
-        model=os.environ.get("GEMINI_BIRTHCERT_MODEL", "gemini-2.5-flash"),
-        max_tokens=int(os.environ.get("GEMINI_BIRTHCERT_MAX_TOKENS", "4096")),
-        rpm_delay=0,
+        max_new_tokens=int(os.environ.get("BIRTHCERT_MAX_NEW_TOKENS", "2048")),
+        enhance_image=True,
     )
 
 

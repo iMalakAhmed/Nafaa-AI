@@ -2,7 +2,7 @@
 
 This project exposes one RunPod Serverless handler that can extract:
 
-- birth certificates with Gemini
+- birth certificates with Qwen2.5-VL + `bc_lora_v4` LoRA adapter
 - case-study forms with Gemini
 - Egyptian national IDs with `ebrahimabdelghfar/National-ID-Reader` YOLO weights + EasyOCR
 
@@ -24,15 +24,27 @@ Create a RunPod Serverless endpoint with:
 
 ```text
 GEMINI_API_KEY=your_google_ai_studio_key
+ADAPTER_BC_PATH=/app/deploy/adapters/bc_lora_v4
 ```
 
 Optional:
 
 ```text
-GEMINI_BIRTHCERT_MODEL=gemini-2.5-flash
 GEMINI_CASESTUDY_MODEL=gemini-2.5-flash
 GEMINI_CLASSIFIER_MODEL=gemini-2.5-flash
+BIRTHCERT_MODEL=Qwen/Qwen2.5-VL-3B-Instruct
+BIRTHCERT_TORCH_DTYPE=bfloat16
+BIRTHCERT_ATTN=sdpa
 ```
+
+The Dockerfile defaults `ADAPTER_BC_PATH` to `/app/deploy/adapters/bc_lora_v4`.
+Before building the final production image, copy the trained adapter folder into:
+
+```text
+deploy/adapters/bc_lora_v4
+```
+
+or mount it in RunPod and set `ADAPTER_BC_PATH` to that mounted path.
 
 ## Request Shape
 
@@ -139,4 +151,3 @@ For auto-routing:
   }
 }
 ```
-
