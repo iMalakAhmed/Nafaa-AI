@@ -11,21 +11,56 @@ Usage:
 """
 
 from __future__ import annotations
+import copy
 import json
 import os
 import time
 from pathlib import Path
 from typing import Any
 
-from .extract import _merge_crop_raw
 from .jsonparse import extract_first_json_object
 from .preprocess import prepare
 from .prompt import SYSTEM_PROMPT, build_region_instruction, build_user_instruction
 from .regions import iter_crops
-from .schema import empty_record
+from .schema import FIELD_KINDS, empty_record, get_path, set_path
 from .validate import validate_record
 
 DEFAULT_MODEL = "gemini-2.5-flash"
+
+
+def _merge_crop_raw(base: dict[str, Any], crop: dict[str, Any]) -> dict[str, Any]:
+    result = copy.deepcopy(base)
+
+    for path in FIELD_KINDS:
+        if get_path(result, path) is None:
+            crop_val = get_path(crop, path)
+            if crop_val is not None:
+                set_path(result, path, crop_val)
+
+    base_fam = result.get("family_members") or []
+    crop_fam = crop.get("family_members") or []
+    if isinstance(crop_fam, list) and len(crop_fam) > len(base_fam):
+        result["family_members"] = crop_fam
+
+    base_cb: list[dict] = result.get("checkbox_answers") or []
+    crop_cb: list[dict] = crop.get("checkbox_answers") or []
+    if isinstance(crop_cb, list) and crop_cb:
+        seen = {
+            (c.get("section", ""), c.get("question", ""), c.get("answer", ""))
+            for c in base_cb
+        }
+        for cb in crop_cb:
+            key = (cb.get("section", ""), cb.get("question", ""), cb.get("answer", ""))
+            if key not in seen:
+                base_cb.append(cb)
+                seen.add(key)
+        result["checkbox_answers"] = base_cb
+
+    base_unc = set(result.get("uncertain_fields") or [])
+    crop_unc = set(crop.get("uncertain_fields") or [])
+    result["uncertain_fields"] = sorted(base_unc | crop_unc)
+
+    return result
 
 
 def _json_only(instruction: str) -> str:
