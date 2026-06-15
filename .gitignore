@@ -1,11 +1,16 @@
 .venv/
 .modal/
 .claude/
+.agents/
+.codex/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
 outputs/*
 !outputs/benchmark/
@@ -18,3 +23,30 @@ outputs/raw_model_outputs/*
 
 rendered_pages/
 sample_case_500.pdf
+
+# Local datasets / generated labels
+data/raw_images/
+data/yolo/
+data/birthcert_yolo/labels/**/*.cache
+data/birthcert_yolo/labels/train/BC_00001.txt
+data/birthcert_yolo/labels/train/BC_0[3-9][0-9].txt
+data/birthcert_yolo/labels/train/BC_05[0-9].txt
+data/birthcert_yolo/previews/
+
+# Model weights and local ML artifacts
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+*.bin
+*.gguf
+wandb/
+runs/
+mlruns/
+offload/
+
+# Temporary/local files
+.tmp_*
+*.tmp
+*.log
