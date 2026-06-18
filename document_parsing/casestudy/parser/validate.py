@@ -13,7 +13,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--birth-certificate",
         action="store_true",
-        help="Validate against schemas/birth_certificate.schema.json instead of case study.",
+        help=(
+            "Validate against "
+            "document_parsing/birthcert/schemas/birth_certificate.schema.json instead of case study."
+        ),
     )
     return parser.parse_args()
 

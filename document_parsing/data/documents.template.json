@@ -1,0 +1,11 @@
+[
+  {
+    "document_id": "case_0001",
+    "document_type": "handwritten",
+    "images": [
+      "document_parsing/data/raw_images/case_0001_page_1.jpg",
+      "document_parsing/data/raw_images/case_0001_page_2.jpg",
+      "document_parsing/data/raw_images/case_0001_page_3.jpg"
+    ]
+  }
+]

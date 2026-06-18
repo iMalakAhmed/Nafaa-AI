@@ -1,0 +1,18 @@
+[
+  {
+    "documentation": "Output JSON shape (3 groups): schemas/birth_certificate.schema.json — see document_parsing/data/birth_certificate_bundle.json.",
+    "document_id": "BC_001",
+    "document_type": "birth_certificate",
+    "images": [
+      "document_parsing/data/raw_images/DataSet/Birth Certificate/BC_001.jpeg"
+    ]
+  },
+  {
+    "documentation": "Output JSON shape (3 groups): schemas/birth_certificate.schema.json — see document_parsing/data/birth_certificate_bundle.json.",
+    "document_id": "BC_002",
+    "document_type": "birth_certificate",
+    "images": [
+      "document_parsing/data/raw_images/DataSet/Birth Certificate/BC_002.jpeg"
+    ]
+  }
+]

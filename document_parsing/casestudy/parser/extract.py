@@ -51,7 +51,7 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="TYPE=DIR",
         help=(
             "Load single-image documents from a directory and assign a document type. "
-            "Example: --typed-input-dir birth_certificate=data/raw_images/DataSet/Birth Certificate"
+            "Example: --typed-input-dir birth_certificate=document_parsing/data/raw_images/DataSet/Birth Certificate"
         ),
     )
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"), help="Output directory.")

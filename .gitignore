@@ -5,12 +5,12 @@ __pycache__/
 *.pyd
 .pytest_cache/
 
-outputs/benchmark/*
-!outputs/benchmark/.gitkeep
-outputs/predictions/*
-!outputs/predictions/.gitkeep
-outputs/raw_model_outputs/*
-!outputs/raw_model_outputs/.gitkeep
+document_parsing/outputs/benchmark/*
+!document_parsing/outputs/benchmark/.gitkeep
+document_parsing/outputs/predictions/*
+!document_parsing/outputs/predictions/.gitkeep
+document_parsing/outputs/raw_model_outputs/*
+!document_parsing/outputs/raw_model_outputs/.gitkeep
 
 rendered_pages/
 sample_case_500.pdf

@@ -1,7 +1,7 @@
 {
   "document_id": "case_0001",
   "source_files": [
-    "data/raw_images/case_0001_page_1.jpg"
+    "document_parsing/data/raw_images/case_0001_page_1.jpg"
   ],
   "page_count": 1,
   "case_office": null,

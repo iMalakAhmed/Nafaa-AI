@@ -16,7 +16,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-path",
         type=Path,
-        default=Path("outputs/benchmark/summary.json"),
+        default=Path("document_parsing/outputs/benchmark/summary.json"),
         help="Where to write the summary report.",
     )
     return parser.parse_args()

@@ -8,11 +8,15 @@ from typing import Any, Iterable
 
 from jsonschema import Draft202012Validator
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-SCHEMA_PATH = ROOT_DIR / "schemas" / "case_study.schema.json"
-PROMPT_PATH = ROOT_DIR / "prompts" / "extract_case_study_prompt.txt"
-BIRTH_CERT_SCHEMA_PATH = ROOT_DIR / "schemas" / "birth_certificate.schema.json"
-BIRTH_CERT_PROMPT_PATH = ROOT_DIR / "prompts" / "extract_birth_certificate_prompt.txt"
+ROOT_DIR = Path(__file__).resolve().parents[3]
+SCHEMA_PATH = ROOT_DIR / "document_parsing" / "casestudy" / "schemas" / "case_study.schema.json"
+PROMPT_PATH = ROOT_DIR / "document_parsing" / "casestudy" / "prompts" / "extract_case_study_prompt.txt"
+BIRTH_CERT_SCHEMA_PATH = (
+    ROOT_DIR / "document_parsing" / "birthcert" / "schemas" / "birth_certificate.schema.json"
+)
+BIRTH_CERT_PROMPT_PATH = (
+    ROOT_DIR / "document_parsing" / "birthcert" / "prompts" / "extract_birth_certificate_prompt.txt"
+)
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
 ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
 PERSIAN_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
@@ -111,7 +115,7 @@ def load_documents(input_dir: Path | None = None, manifest_path: Path | None = N
         else:
             raise ValueError(
                 "Manifest must be a JSON array of document objects, or an object with key "
-                "'pipeline_manifest' (see data/birth_certificate_bundle.json)."
+                "'pipeline_manifest' (see document_parsing/data/birth_certificate_bundle.json)."
             )
         if not isinstance(manifest, list):
             raise ValueError("Manifest must be a JSON array of document objects.")
