@@ -1,0 +1,65 @@
+{
+  "document_id": "CS_008",
+  "source_files": ["data/raw_images/DataSet/cast study/CS_008.jpeg"],
+  "page_count": 1,
+  "document": {
+    "document_type": "case_study",
+    "form_version": "new",
+    "page_side": "front",
+    "case_number": null,
+    "research_date": null,
+    "source_entity": null
+  },
+  "office": {
+    "directorate": null,
+    "administration": null,
+    "social_unit": null,
+    "researcher_name": null,
+    "requesting_entity": null,
+    "research_purpose": null
+  },
+  "applicant": {
+    "full_name": null,
+    "national_id": null,
+    "insurance_number": null,
+    "age": null,
+    "gender": null,
+    "phone": null,
+    "address": null,
+    "governorate": null,
+    "district": null,
+    "marital_status": null,
+    "education_status": null,
+    "employment_status": null,
+    "health_status": null
+  },
+  "family_members": [],
+  "housing": {
+    "type": null,
+    "ownership": null,
+    "area": null,
+    "rooms_count": null,
+    "rent_value": null,
+    "independence": null,
+    "water_source": null,
+    "electricity": null,
+    "appliances_condition": null
+  },
+  "assets": {"properties": null},
+  "social_assessment": {
+    "family_social_status": null,
+    "health_notes": null,
+    "economic_status": null,
+    "family_needs": null,
+    "researcher_summary": null
+  },
+  "checkbox_answers": [],
+  "signatures": {
+    "researcher_name": null,
+    "unit_manager_name": null,
+    "stamp_present": false
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": ["blank new front form page; no handwritten values are present"]
+}

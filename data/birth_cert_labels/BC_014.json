@@ -1,0 +1,51 @@
+{
+  "document_id": "BC_014",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_014.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "2089047474",
+    "registration_number": "482",
+    "registration_date": "2008/03/03",
+    "issue_date": "2017/03/08",
+    "health_office": "شبين الكوم ثان",
+    "civil_registry": "شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": "www.cso.gov.eg"
+  },
+  "ids": {
+    "child_national_id": "30802281701235",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "علي",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / شبين الكوم",
+      "date_of_birth": "28/02/2008"
+    },
+    "father": {
+      "name": "عادل علي سيد أحمد قشطة",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "عزة علي شريف محمد",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": []
+}

@@ -1,0 +1,51 @@
+{
+  "document_id": "BC_005",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_005.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "2048289234",
+    "registration_number": "818",
+    "registration_date": "2001/12/26",
+    "issue_date": "2016/12/26",
+    "health_office": "البتانون",
+    "civil_registry": "مركز شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": "www.cso.gov.eg"
+  },
+  "ids": {
+    "child_national_id": "30112241701767",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "اسراء",
+      "gender": "أنثى",
+      "religion": "مسلمة",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "24/12/2001"
+    },
+    "father": {
+      "name": "هشام علي عامر",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "سماح شوقي الشباسي",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": []
+}

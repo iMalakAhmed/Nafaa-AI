@@ -1,0 +1,51 @@
+{
+  "document_id": "BC_029",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_029.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "3581445775",
+    "registration_number": "63",
+    "registration_date": "2018/01/08",
+    "issue_date": "2024/06/12",
+    "health_office": "الشهداء",
+    "civil_registry": "مركز الشهداء",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "31712291701637",
+    "father_national_id": "27807101700197",
+    "mother_national_id": "28401141700481",
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "محمد",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز الشهداء",
+      "date_of_birth": "29/12/2017"
+    },
+    "father": {
+      "name": "سامح محمد مصطفى عيسى",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "رشا محمد اسماعيل عمارة",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": []
+}

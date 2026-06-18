@@ -1,0 +1,49 @@
+# RunPod Serverless — document extraction
+# Build: docker build -f Dockerfile.runpod -t <your-dockerhub>/doc-extraction:latest .
+# Push:  docker push <your-dockerhub>/doc-extraction:latest
+
+FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04
+
+WORKDIR /app
+
+# System deps for Pillow / OpenCV
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl libgl1 libglib2.0-0 libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python deps
+COPY requirements.txt .
+COPY requirements-yolo-ocr.txt .
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir -r requirements-yolo-ocr.txt \
+    && pip install --no-cache-dir \
+        "google-genai>=1.0.0" \
+        torchvision \
+        "peft>=0.12.0" \
+        "bitsandbytes>=0.46.1" \
+        runpod
+
+ENV NATIONAL_ID_MODEL_DIR=/app/national-id-models
+RUN mkdir -p ${NATIONAL_ID_MODEL_DIR} \
+    && curl -L --retry 5 --retry-delay 2 \
+        https://raw.githubusercontent.com/ebrahimabdelghfar/National-ID-Reader/main/card_finder_seg.pt \
+        -o ${NATIONAL_ID_MODEL_DIR}/card_finder_seg.pt \
+    && curl -L --retry 5 --retry-delay 2 \
+        https://raw.githubusercontent.com/ebrahimabdelghfar/National-ID-Reader/main/card_divider_model.pt \
+        -o ${NATIONAL_ID_MODEL_DIR}/card_divider_model.pt
+
+# Project source (no data, no outputs, no adapters — those go on a network volume)
+COPY birthcert/   birthcert/
+COPY casestudy/   casestudy/
+COPY printeddoc/  printeddoc/
+COPY nationalid/  nationalid/
+COPY tools/       tools/
+COPY handler.py .
+COPY deploy/      deploy/
+
+# HuggingFace model cache — override at runtime by mounting a network volume here
+ENV HF_HOME=/cache/huggingface
+ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+ENV ADAPTER_BC_PATH=/app/deploy/adapters/bc_lora_v4
+
+CMD ["python", "-u", "handler.py"]

@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Egyptian printed social-insurance document extraction (four logical groups)",
+  "description": "Covers two sub-types issued by NOSI / صندوق العاملين: (1) social-insurance inquiry استعلام بيانات مؤمن عليه, (2) periodic-payroll slip بيانات الصرف الدوري. Fields that belong to the other sub-type are null.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_id",
+    "source_files",
+    "page_count",
+    "document_header",
+    "ids",
+    "personal",
+    "social_insurance",
+    "payroll",
+    "uncertain_fields",
+    "review_required",
+    "review_notes"
+  ],
+  "properties": {
+    "document_id":   { "type": "string", "minLength": 1 },
+    "source_files":  { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "page_count":    { "type": "integer", "minimum": 1 },
+
+    "document_header": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Document-level metadata: type, issuing body, template codes, office hierarchy, print timestamp, reference number.",
+      "required": [
+        "document_type",
+        "document_title_ar",
+        "issuing_authority_ar",
+        "template_code",
+        "print_datetime",
+        "region_code",
+        "region_name",
+        "office_code",
+        "office_name",
+        "unit",
+        "reference_number"
+      ],
+      "properties": {
+        "document_type": {
+          "type": ["string", "null"],
+          "description": "One of: social_insurance_inquiry | payroll_slip"
+        },
+        "document_title_ar": {
+          "type": ["string", "null"],
+          "description": "Full Arabic title printed at the top of the document."
+        },
+        "issuing_authority_ar": {
+          "type": ["string", "null"],
+          "description": "Full name of the issuing body, e.g. الهيكلة القومية للتأمين الاجتماعي / صندوق العاملين بقطاعي الأعمال العام والخاص."
+        },
+        "template_code": {
+          "type": ["string", "null"],
+          "description": "Machine template identifier printed top-left, e.g. INDNO050/INDNS08 or BENINPBO/BEINSBO."
+        },
+        "print_datetime": {
+          "type": ["string", "null"],
+          "description": "Timestamp printed top-right of the document, e.g. 2033/02/05 10:43:05."
+        },
+        "region_code":  { "type": ["string", "null"], "description": "منطقة code, e.g. 07." },
+        "region_name":  { "type": ["string", "null"], "description": "منطقة name, e.g. المنوفية." },
+        "office_code":  { "type": ["string", "null"], "description": "مكتب code, e.g. 13." },
+        "office_name":  { "type": ["string", "null"], "description": "مكتب name, e.g. شبين الكوم خان." },
+        "unit": {
+          "type": ["string", "null"],
+          "description": "وحدة — appears on payroll slips only; null for inquiry documents."
+        },
+        "reference_number": {
+          "type": ["string", "null"],
+          "description": "Stamped or printed reference number on the document, e.g. 45838722/IB91."
+        }
+      }
+    },
+
+    "ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "All national ID and insurance numbers on the document.",
+      "required": [
+        "national_id",
+        "insurance_number",
+        "paying_agent_insurance_number",
+        "paying_agent_national_id"
+      ],
+      "properties": {
+        "national_id": {
+          "type": ["string", "null"],
+          "description": "الرقم القومي of the primary person (insured person for inquiry; pension holder for payroll). 14 digits."
+        },
+        "insurance_number": {
+          "type": ["string", "null"],
+          "description": "الرقم التأميني of the primary person (inquiry) or رقم تأميني صاحب المعاش (payroll)."
+        },
+        "paying_agent_insurance_number": {
+          "type": ["string", "null"],
+          "description": "رقم تأميني القائم بالصرف — payroll slips only; null for inquiry."
+        },
+        "paying_agent_national_id": {
+          "type": ["string", "null"],
+          "description": "رقم قومي القائم بالصرف — payroll slips only; null for inquiry."
+        }
+      }
+    },
+
+    "personal": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Demographics of the primary person named on the document (insured person or pension holder). The paying agent's name lives inside payroll.paying_agent.",
+      "required": [
+        "full_name_triple",
+        "family_name",
+        "mother_name",
+        "gender",
+        "date_of_birth",
+        "governorate_code",
+        "governorate_name",
+        "district_code",
+        "district_name",
+        "sector_law"
+      ],
+      "properties": {
+        "full_name_triple": {
+          "type": ["string", "null"],
+          "description": "الاسم ثلاثي — three-part given name of the primary person."
+        },
+        "family_name": {
+          "type": ["string", "null"],
+          "description": "اسم العائلة — family/surname. Present on inquiry forms; may be null on payroll slips."
+        },
+        "mother_name": {
+          "type": ["string", "null"],
+          "description": "اسم الوالدة — mother's name."
+        },
+        "gender": {
+          "type": ["string", "null"],
+          "description": "النوع — gender as printed: ذكر or أنثى (or the code 1/2)."
+        },
+        "date_of_birth": {
+          "type": ["string", "null"],
+          "description": "تاريخ الميلاد as printed, e.g. 1978/04/01."
+        },
+        "governorate_code": {
+          "type": ["string", "null"],
+          "description": "محافظة numeric code, e.g. 17."
+        },
+        "governorate_name": {
+          "type": ["string", "null"],
+          "description": "محافظة name, e.g. المنوفية."
+        },
+        "district_code": {
+          "type": ["string", "null"],
+          "description": "قسم / مركز numeric code, e.g. 02."
+        },
+        "district_name": {
+          "type": ["string", "null"],
+          "description": "قسم / مركز name, e.g. مركز شبين الكوم."
+        },
+        "sector_law": {
+          "type": ["string", "null"],
+          "description": "قانون / قطاع — often blank; null when not printed."
+        }
+      }
+    },
+
+    "social_insurance": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Fields specific to استعلام بيانات مؤمن عليه inquiry documents. Set to null for payroll slips.",
+      "required": [
+        "insurance_status",
+        "insurance_status_note",
+        "main_center_address",
+        "website",
+        "customer_service_number",
+        "fax_number"
+      ],
+      "properties": {
+        "insurance_status": {
+          "type": ["string", "null"],
+          "description": "Normalised insurance status extracted from the ** section: مؤمن عليه حاليا | غير مؤمن عليه حاليا | لا توجد بيانات تأمينية."
+        },
+        "insurance_status_note": {
+          "type": ["string", "null"],
+          "description": "Full text of the ** status note as printed, e.g. لا توجد بيانات تأمينية لهذا الشخص."
+        },
+        "main_center_address": {
+          "type": ["string", "null"],
+          "description": "المركز الرئيسي address, e.g. 3 ش الألفي - القاهرة."
+        },
+        "website": {
+          "type": ["string", "null"],
+          "description": "الموقع الالكتروني, e.g. WWW.NOSI.GOV.EG."
+        },
+        "customer_service_number": {
+          "type": ["string", "null"],
+          "description": "خدمة العملاء phone number, e.g. 16217."
+        },
+        "fax_number": {
+          "type": ["string", "null"],
+          "description": "رقم الفاكس, e.g. 25912453."
+        }
+      }
+    },
+
+    "payroll": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Fields specific to بيانات الصرف الدوري payroll/pension slip documents. Set to null for inquiry documents.",
+      "required": [
+        "pension_sector",
+        "follow_up_office",
+        "payment_start_date",
+        "disbursement_bank",
+        "payment_type",
+        "current_account_number",
+        "total_entitlement",
+        "total_deductions",
+        "net_pension",
+        "paying_agent",
+        "form_codes"
+      ],
+      "properties": {
+        "pension_sector": {
+          "type": ["string", "null"],
+          "description": "قطاع المعاش — sector that the pension belongs to."
+        },
+        "follow_up_office": {
+          "type": ["string", "null"],
+          "description": "منطقة / مكتب المتابعة — follow-up region and office."
+        },
+        "payment_start_date": {
+          "type": ["string", "null"],
+          "description": "بداية الصرف الدوري — date from which periodic payment starts, e.g. 1-2-21."
+        },
+        "disbursement_bank": {
+          "type": ["string", "null"],
+          "description": "جهة الصرف — bank or location where payment is disbursed."
+        },
+        "payment_type": {
+          "type": ["string", "null"],
+          "description": "نوع المدفوع — type of payment."
+        },
+        "current_account_number": {
+          "type": ["string", "null"],
+          "description": "رقم الحساب الجاري — bank account number."
+        },
+        "total_entitlement": {
+          "type": ["string", "null"],
+          "description": "إجمالي الاستحقاق — total gross entitlement as printed, e.g. 1319 جنيه 76."
+        },
+        "total_deductions": {
+          "type": ["string", "null"],
+          "description": "إجمالي الاستقطاع — total deductions as printed."
+        },
+        "net_pension": {
+          "type": ["string", "null"],
+          "description": "صافي المعاش — net pension after deductions as printed, e.g. 1917 جنيه."
+        },
+        "paying_agent": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "القائم بالصرف — the person authorised to collect the pension on behalf of the holder.",
+          "required": ["name"],
+          "properties": {
+            "name": {
+              "type": ["string", "null"],
+              "description": "Full name of the paying agent as printed alongside their insurance number."
+            }
+          }
+        },
+        "form_codes": {
+          "type": "array",
+          "description": "Navigation / form codes printed at the bottom, e.g. PF06, PF10, PF03.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "uncertain_fields": {
+      "type": "array",
+      "description": "Dot-path names of fields the model could not read confidently.",
+      "items": { "type": "string" }
+    },
+    "review_required": { "type": "boolean" },
+    "review_notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

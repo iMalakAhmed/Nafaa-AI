@@ -1,0 +1,56 @@
+{
+  "document_id": "BC_001",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_001.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "3094556154",
+    "registration_number": "152",
+    "registration_date": "2004/03/13",
+    "issue_date": "2022/06/15",
+    "health_office": "البتانون",
+    "civil_registry": "مركز شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": "نموذج 2/40",
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "30403091700983",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "رنا",
+      "gender": "أنثى",
+      "religion": "مسلمة",
+      "national ity": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "09/03/2004"
+    },
+    "father": {
+      "name": "ابراهيم عبد الغني حسن بدر",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "غادة حسني الحضري",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "ids.child_national_id",
+    "personal_and_other.child.name"
+  ],
+  "review_required": true,
+  "review_notes": [
+    "very faded scan; child name and national IDs not legible enough to transcribe"
+  ]
+}

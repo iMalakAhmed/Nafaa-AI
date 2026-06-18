@@ -1,10 +1,19 @@
 .venv/
+.modal/
+.claude/
+.agents/
+.codex/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
+outputs/*
+!outputs/benchmark/
 outputs/benchmark/*
 !outputs/benchmark/.gitkeep
 outputs/predictions/*
@@ -14,3 +23,56 @@ outputs/raw_model_outputs/*
 
 rendered_pages/
 sample_case_500.pdf
+
+# Local datasets / generated labels
+data/raw_images/
+data/yolo/
+data/*_labels/*.json
+data/*_ft/*.jsonl
+data/birthcert_yolo/labels/**/*.cache
+data/birthcert_yolo/labels/train/BC_00001.txt
+data/birthcert_yolo/labels/train/BC_0[3-9][0-9].txt
+data/birthcert_yolo/labels/train/BC_05[0-9].txt
+data/birthcert_yolo/previews/
+
+# Model weights and local ML artifacts
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+*.bin
+*.gguf
+wandb/
+runs/
+mlruns/
+offload/
+
+# Temporary/local files
+.tmp_*
+*.tmp
+*.log
+
+# Experiment / local job scripts not needed for production RunPod deploy
+*_infer.py
+*_trigger.py
+*_modal.py
+*_benchmark.py
+*_api_eval_trigger.py
+*_finetune_trigger.py
+*_finetune_modal.py
+*_paddleocr_modal.py
+*_qari_modal.py
+*_yolo_qari_trigger.py
+birthcert/annotate.py
+birthcert/evaluate*.py
+birthcert/yolo_ocr.py
+casestudy/annotate.py
+casestudy/evaluate*.py
+casestudy/extract_claude.py
+casestudy/extract_groq.py
+casestudy/extract_ocr.py
+casestudy/yolo_ocr.py
+tools/generate_*.py
+tools/preview_*.py
+yolo_utils.py

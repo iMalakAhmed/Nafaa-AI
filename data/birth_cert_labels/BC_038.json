@@ -1,0 +1,53 @@
+{
+  "document_id": "BC_038",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_038.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "3089883732",
+    "registration_number": "644",
+    "registration_date": "2020/02/04",
+    "issue_date": "2022/06/29",
+    "health_office": "شبين الكوم أول",
+    "civil_registry": "شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": null
+  },
+  "ids": {
+    "child_national_id": "32001211702696",
+    "father_national_id": "27807101700197",
+    "mother_national_id": "28401141700481",
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "حمزة",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / مركز شبين الكوم",
+      "date_of_birth": "21/01/2020"
+    },
+    "father": {
+      "name": "سامح محمد مصطفى عيسى",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "رشا محمد اسماعيل عمارة",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [],
+  "review_required": false,
+  "review_notes": [
+    "duplicate scan of BC_028"
+  ]
+}

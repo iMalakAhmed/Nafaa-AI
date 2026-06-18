@@ -1,0 +1,57 @@
+{
+  "document_id": "BC_017",
+  "source_files": [
+    "data/raw_images/DataSet/Birth Certificate/BC_017.jpeg"
+  ],
+  "page_count": 1,
+  "birth_certificate": {
+    "document_title_ar": "صورة قيد الميلاد",
+    "serial_number": "2188611756",
+    "registration_number": "1991",
+    "registration_date": "2002/07/09",
+    "issue_date": "2017/09/25",
+    "health_office": "شبين الكوم أول",
+    "civil_registry": "شبين الكوم",
+    "issuing_authority": "وزارة الداخلية / قطاع الأحوال المدنية",
+    "governorate_or_administration": "المنوفية",
+    "form_reference": null,
+    "issuance_system_version": null,
+    "barcode_or_machine_notes": "www.cso.gov.eg"
+  },
+  "ids": {
+    "child_national_id": "30206291702076",
+    "father_national_id": null,
+    "mother_national_id": null,
+    "other_ids": []
+  },
+  "personal_and_other": {
+    "child": {
+      "name": "السيد",
+      "gender": "ذكر",
+      "religion": "مسلم",
+      "nationality": "مصر",
+      "place_of_birth": "المنوفية / شبين الكوم",
+      "date_of_birth": "29/06/2002"
+    },
+    "father": {
+      "name": "ياسر السيد ابو عبيد",
+      "religion": "مسلم",
+      "nationality": "مصر"
+    },
+    "mother": {
+      "name": "امال السيد مصطفى عجلان",
+      "religion": "مسلمة",
+      "nationality": "مصر"
+    },
+    "misc_notes": null
+  },
+  "uncertain_fields": [
+    "ids.father_national_id",
+    "ids.mother_national_id",
+    "personal_and_other.child.name"
+  ],
+  "review_required": false,
+  "review_notes": [
+    "father/mother national IDs are printed but too smeared to transcribe reliably"
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "document_id": "CS_002",
+  "source_files": ["data/raw_images/DataSet/cast study/CS_002.jpeg"],
+  "page_count": 1,
+  "document": {
+    "document_type": "case_study",
+    "form_version": "old",
+    "page_side": "front",
+    "case_number": "19",
+    "research_date": "2021/12/12",
+    "source_entity": null
+  },
+  "office": {
+    "directorate": "مديرية التضامن الاجتماعي بالمنوفية",
+    "administration": "شبين الكوم",
+    "social_unit": null,
+    "researcher_name": "أ. أحمد أيمن",
+    "requesting_entity": null,
+    "research_purpose": "مساعدة مالية"
+  },
+  "applicant": {
+    "full_name": "رحمة صبحي الخضري",
+    "national_id": null,
+    "insurance_number": "170005850",
+    "age": 22,
+    "gender": null,
+    "phone": null,
+    "address": "الشهداء مركز شبين الكوم محافظة المنوفية",
+    "governorate": "المنوفية",
+    "district": "مركز شبين الكوم",
+    "marital_status": null,
+    "education_status": null,
+    "employment_status": null,
+    "health_status": null
+  },
+  "family_members": [
+    {
+      "row_index": 1,
+      "name": "رحمة صبحي الخضري",
+      "relationship": null,
+      "age": 22,
+      "national_id": "170005850",
+      "marital_status": "أرملة",
+      "education_status": null,
+      "employment_status": null,
+      "health_status": null,
+      "notes": null
+    },
+    {
+      "row_index": 2,
+      "name": "مريم محمد",
+      "relationship": "ابنة",
+      "age": 19,
+      "national_id": null,
+      "marital_status": "طالبة علم",
+      "education_status": null,
+      "employment_status": null,
+      "health_status": null,
+      "notes": null
+    },
+    {
+      "row_index": 3,
+      "name": "مصطفى محمد",
+      "relationship": "ابن",
+      "age": null,
+      "national_id": null,
+      "marital_status": "طالب",
+      "education_status": null,
+      "employment_status": null,
+      "health_status": null,
+      "notes": null
+    },
+    {
+      "row_index": 4,
+      "name": "أميرة محمد",
+      "relationship": "ابنة",
+      "age": null,
+      "national_id": null,
+      "marital_status": "طالبة ابتدائي",
+      "education_status": null,
+      "employment_status": null,
+      "health_status": null,
+      "notes": null
+    }
+  ],
+  "housing": {
+    "type": "بسيط",
+    "ownership": "ملك",
+    "area": null,
+    "rooms_count": 2,
+    "rent_value": null,
+    "independence": "مستقل بالأسرة",
+    "water_source": null,
+    "electricity": null,
+    "appliances_condition": null
+  },
+  "assets": {"properties": null},
+  "social_assessment": {
+    "family_social_status": null,
+    "health_notes": null,
+    "economic_status": null,
+    "family_needs": null,
+    "researcher_summary": null
+  },
+  "checkbox_answers": [],
+  "signatures": {
+    "researcher_name": null,
+    "unit_manager_name": null,
+    "stamp_present": true
+  },
+  "uncertain_fields": [
+    "document.source_entity",
+    "office.social_unit",
+    "office.requesting_entity",
+    "applicant.full_name",
+    "applicant.national_id",
+    "applicant.insurance_number",
+    "family_members"
+  ],
+  "review_required": false,
+  "review_notes": ["old front page; handwriting and table are partly blurred"]
+}

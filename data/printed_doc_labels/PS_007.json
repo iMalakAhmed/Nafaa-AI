@@ -1,0 +1,58 @@
+{
+  "document_id": "PS_007",
+  "source_files": [
+    "data/raw_images/DataSet/printed_docuemnts/PS_007.jpeg"
+  ],
+  "page_count": 1,
+  "document_header": {
+    "document_type": "social_insurance_inquiry",
+    "document_title_ar": "استعلام بيانات مؤمن عليه بالملف التأميني",
+    "issuing_authority_ar": "الهيئة القومية للتأمين الاجتماعي / صندوق العاملين بقطاعي الأعمال العام والخاص",
+    "template_code": "INDNO050/INDNS08",
+    "print_datetime": "2022/08/23",
+    "region_code": "07",
+    "region_name": "المنوفية",
+    "office_code": "01",
+    "office_name": "شبين الكوم أول",
+    "unit": null,
+    "reference_number": "45838722/1884"
+  },
+  "ids": {
+    "national_id": null,
+    "insurance_number": null,
+    "paying_agent_insurance_number": null,
+    "paying_agent_national_id": null
+  },
+  "personal": {
+    "full_name_triple": "عزة سيد العزيز",
+    "family_name": "زكزك",
+    "mother_name": "نصائر عبد المنعم",
+    "gender": "أنثى",
+    "date_of_birth": "1976/07/01",
+    "governorate_code": "17",
+    "governorate_name": "المنوفية",
+    "district_code": "02",
+    "district_name": "مركز شبين الكوم",
+    "sector_law": null
+  },
+  "social_insurance": {
+    "insurance_status": "مؤمن عليه حاليا",
+    "insurance_status_note": "مؤمن عليه لا يعمل طرف صاحب العمل",
+    "main_center_address": "٣ ش الألفي - القاهرة",
+    "website": "WWW.NOSI.GOV.EG",
+    "customer_service_number": "16217",
+    "fax_number": "25912453"
+  },
+  "payroll": null,
+  "uncertain_fields": [
+    "ids.national_id",
+    "ids.insurance_number",
+    "personal.full_name_triple",
+    "personal.family_name",
+    "social_insurance.insurance_status"
+  ],
+  "review_required": true,
+  "review_notes": [
+    "insurance note is readable but the exact active/inactive normalization needs review"
+  ]
+}

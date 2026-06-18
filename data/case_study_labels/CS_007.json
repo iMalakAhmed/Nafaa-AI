@@ -1,0 +1,73 @@
+{
+  "document_id": "CS_007",
+  "source_files": ["data/raw_images/DataSet/cast study/CS_007.jpeg"],
+  "page_count": 1,
+  "document": {
+    "document_type": "case_study",
+    "form_version": "new",
+    "page_side": "front",
+    "case_number": null,
+    "research_date": "2025/12/19",
+    "source_entity": null
+  },
+  "office": {
+    "directorate": "المنوفية",
+    "administration": null,
+    "social_unit": null,
+    "researcher_name": null,
+    "requesting_entity": null,
+    "research_purpose": null
+  },
+  "applicant": {
+    "full_name": "وفاء محمد إسماعيل بركة",
+    "national_id": null,
+    "insurance_number": null,
+    "age": 41,
+    "gender": "أنثى",
+    "phone": null,
+    "address": null,
+    "governorate": "المنوفية",
+    "district": null,
+    "marital_status": "أرملة",
+    "education_status": "دبلوم تجاري",
+    "employment_status": "لا يعمل",
+    "health_status": "جيدة"
+  },
+  "family_members": [
+    {"row_index": 1, "name": "وفاء محمد إسماعيل بركة", "relationship": "الأم", "age": 41, "national_id": null, "marital_status": "أرملة", "education_status": "دبلوم تجاري", "employment_status": "لا يعمل", "health_status": "جيدة", "notes": null},
+    {"row_index": 2, "name": "حبيبة سامح محمد", "relationship": "ابنة", "age": 17, "national_id": null, "marital_status": "غير متزوجة", "education_status": "ثانوي صناعي", "employment_status": "لا يعمل", "health_status": "جيدة", "notes": null},
+    {"row_index": 3, "name": "بسملة محمد", "relationship": "ابنة", "age": 9, "national_id": null, "marital_status": "طالبة", "education_status": "ثاني ابتدائي", "employment_status": "لا يعمل", "health_status": "جيدة", "notes": null},
+    {"row_index": 4, "name": "غزل محمد", "relationship": "ابنة", "age": 6, "national_id": null, "marital_status": "طفل", "education_status": "حضانة", "employment_status": "لا يعمل", "health_status": "جيدة", "notes": null}
+  ],
+  "housing": {
+    "type": null,
+    "ownership": null,
+    "area": null,
+    "rooms_count": null,
+    "rent_value": null,
+    "independence": null,
+    "water_source": null,
+    "electricity": null,
+    "appliances_condition": null
+  },
+  "assets": {"properties": null},
+  "social_assessment": {
+    "family_social_status": null,
+    "health_notes": null,
+    "economic_status": null,
+    "family_needs": null,
+    "researcher_summary": null
+  },
+  "checkbox_answers": [
+    {"section": "بيانات أولية", "question": "النوع", "answer": "أنثى", "checked": true, "confidence": "medium"},
+    {"section": "الحالة الاجتماعية", "question": "الحالة الاجتماعية", "answer": "أرملة", "checked": true, "confidence": "medium"}
+  ],
+  "signatures": {
+    "researcher_name": null,
+    "unit_manager_name": null,
+    "stamp_present": false
+  },
+  "uncertain_fields": ["applicant.full_name", "family_members", "checkbox_answers"],
+  "review_required": false,
+  "review_notes": ["new front page; image is lower resolution and table handwriting is partly uncertain"]
+}
