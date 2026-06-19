@@ -1,0 +1,117 @@
+{
+  "request_id": "REQ-2026-001",
+  "processing_timestamp": "2026-06-02T12:34:56Z",
+
+  "case_snapshot": {
+    "main_request_ar": "علاج فيروس سي",
+    "request_type": "medical",
+    "input_channels_used": {
+      "text": true,
+      "voice": false,
+      "images": true
+    }
+  },
+
+  "evidence_intelligence": {
+    "overall_trust_level": "high",
+    "fraud_risk": "low",
+
+    "voice": {
+      "exists": false,
+      "transcript_ar": null
+    },
+
+    "images": {
+      "count": 1,
+      "quality": "high",
+      "clarity_score": 0.92,
+      "detected_medical_items": [
+        "Sovaldi 400mg"
+      ]
+    },
+
+    "consistency_check": {
+      "text_matches_images": true,
+      "conflicts_found": false
+    }
+  },
+
+  "human_need_model": {
+    "primary_need_ar": "علاج فيروس سي",
+    "medical_condition": "Hepatitis C",
+
+    "urgency": {
+      "level": "high",
+      "label_ar": "عاجل",
+      "reason_ar": "مرض مزمن يحتاج علاج مستمر"
+    },
+
+    "support_type": [
+      "medical_treatment_financing"
+    ]
+  },
+
+  "cost_estimation": {
+    "currency": "EGP",
+    "estimated_total": 3800,
+
+    "range": {
+      "min": 3400,
+      "max": 4600
+    },
+
+    "confidence": 0.93,
+    "pricing_sources": [
+      "medical_catalog_v1"
+    ]
+  },
+
+  "decision_engine": {
+    "final_decision": "approve",
+    "decision_ar": "قبول مبدئي",
+
+    "confidence": 0.90,
+    "decision_strength": "strong",
+
+    "key_reasons_ar": [
+      "وجود روشتة طبية واضحة",
+      "تحديد العلاج المطلوب بدقة",
+      "تكلفة العلاج معروفة",
+      "لا توجد مؤشرات تزوير"
+    ],
+
+    "risk_notes_ar": []
+  },
+
+  "missing_information": {
+    "has_gaps": false,
+    "missing_fields": [],
+    "clarification_questions_ar": []
+  },
+
+  "next_actions_for_staff": {
+    "action_type": "proceed",
+
+    "action_ar": "بدء إجراءات الدعم المالي بعد التحقق الروتيني",
+
+    "required_steps_ar": [
+      "التحقق من هوية المستفيد",
+      "تأكيد الروشتة من جهة طبية",
+      "تسجيل الحالة في النظام"
+    ]
+  },
+
+  "safety_assessment": {
+    "fraud_risk": "low",
+    "risk_factors": [],
+    "requires_escalation": false
+  },
+
+  "staff_view": {
+    "one_line_summary_ar": "مريض يحتاج علاج فيروس سي موثق بروشتة طبية وحالته مستقرة نسبياً",
+
+    "decision_summary_ar": "يمكن قبول الطلب مبدئياً مع استكمال إجراءات التحقق",
+
+    "confidence_label_ar": "ثقة عالية في التقييم"
+  }
+}

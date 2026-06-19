@@ -1,0 +1,40 @@
+PyMuPDF
+scipy
+huggingface_hub
+safetensors
+
+
+# Audio/Video processing
+pydub
+ffmpeg-python
+soundfile
+# NLP & Language
+word2number
+ollama
+langchain-ollama
+langgraph
+langchain-core
+tavily
+rapidfuzz
+
+# Core dependencies
+requests>=2.31.0
+pillow>=10.0.0
+numpy>=1.24.0
+python-dotenv>=1.0.0
+
+# Image processing
+opencv-python>=4.8.0
+
+# ML/AI models
+transformers>=4.35.0
+torch>=2.0.0
+torchaudio>=2.0.0
+torchvision>=0.15.0
+accelerate>=0.25.0
+sentencepiece>=0.1.99
+faiss-cpu>=1.7.4
+# Testing
+pytest
+runpod
+
